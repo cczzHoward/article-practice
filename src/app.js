@@ -14,7 +14,7 @@ app.get('/api', (req, res) => {
   res.json({ message: 'API is working!' });
 });
 
-app.use('/api/articles', ArticleRouter);
+app.use('/api/v1/articles', ArticleRouter);
 
 app.listen(8080, () => {
   console.log('Server is running on http://localhost:8080');

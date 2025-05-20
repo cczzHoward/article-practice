@@ -1,8 +1,8 @@
 const ArticleRepository = require('../repositories/article');
 
-const getAllArticles = async () => {
+const getArticleList = async () => {
     try {
-        const articles = await ArticleRepository.getAllArticles();
+        const articles = await ArticleRepository.getArticleList();
         return articles;
     } catch (error) {
         console.error('Error fetching articles:', error);
@@ -11,5 +11,5 @@ const getAllArticles = async () => {
 }
 
 module.exports = {
-    getAllArticles
+    getArticleList
 };

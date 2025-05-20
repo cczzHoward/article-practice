@@ -1,6 +1,6 @@
 const ArticleModel = require('../models/article');
 
-const getAllArticles = async () => {
+const getArticleList = async () => {
     try {
         const articles = await ArticleModel.find();
         console.log('Articles fetched:', articles);
@@ -76,7 +76,7 @@ const softDeleteArticle = async (id) => {
 }
 
 module.exports = {
-    getAllArticles,
+    getArticleList,
     getArticleById,
     createArticle,
     updateArticle,
