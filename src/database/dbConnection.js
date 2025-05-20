@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
+const logger = require('../utils/logger');
 
 const connectionString = process.env.MONGODB_URI;
 const connection = mongoose.createConnection(connectionString);
@@ -9,7 +9,7 @@ connection.on('connected', () => {
 });
 
 connection.on('error', (err) => {
-    console.error('MongoDB connection error:', err);
+    logger.error('MongoDB connection error:', err);
 });
 
 connection.on('disconnected', () => {

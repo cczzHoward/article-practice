@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const ArticleRepository = require('../repositories/article');
 
 const getArticleList = async () => {
@@ -5,7 +6,7 @@ const getArticleList = async () => {
         const articles = await ArticleRepository.getArticleList();
         return articles;
     } catch (error) {
-        console.error('Error fetching articles:', error);
+        logger.error('Error fetching articles:', error);
         throw new Error('Internal server error');
     }
 }

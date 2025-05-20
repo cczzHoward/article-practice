@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
 
 const ArticleRouter = require('./routes/article');
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

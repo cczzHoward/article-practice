@@ -3,3 +3,6 @@ node_modules/
 
 # .env files
 .env
+
+# log files
+src/utils/logs/*

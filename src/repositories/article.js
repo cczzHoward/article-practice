@@ -1,3 +1,4 @@
+const logger = require('../utils/logger');
 const ArticleModel = require('../models/article');
 
 const getArticleList = async () => {
@@ -6,7 +7,7 @@ const getArticleList = async () => {
         console.log('Articles fetched:', articles);
         return articles;
     } catch (error) {
-        console.error('Error fetching articles:', error);
+        logger.error('Error fetching articles:', error);
         throw new Error('Internal server error');
     }
 }
@@ -19,7 +20,7 @@ const getArticleById = async (id) => {
         }
         return article;
     } catch (error) {
-        console.error('Error fetching article:', error);
+        logger.error('Error fetching article by ID:', error);
         throw new Error('Internal server error');
     }
 }
@@ -30,7 +31,7 @@ const createArticle = async (articleData) => {
         await article.save();
         return article;
     } catch (error) {
-        console.error('Error creating article:', error);
+        logger.error('Error creating article:', error);
         throw new Error('Internal server error');
     }
 }
@@ -44,7 +45,7 @@ const updateArticle = async (id, articleData) => {
         return article;
     }
     catch (error) {
-        console.error('Error updating article:', error);
+        logger.error('Error updating article:', error);
         throw new Error('Internal server error');
     }
 }
@@ -57,7 +58,7 @@ const hardDeleteArticle = async (id) => {
         }
         return article;
     } catch (error) {
-        console.error('Error deleting article:', error);
+        logger.error('Error hard deleting article:', error);
         throw new Error('Internal server error');
     }
 }
@@ -70,7 +71,7 @@ const softDeleteArticle = async (id) => {
         }
         return article;
     } catch (error) {
-        console.error('Error soft deleting article:', error);
+        logger.error('Error soft deleting article:', error);
         throw new Error('Internal server error');
     }
 }
