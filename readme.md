@@ -14,7 +14,7 @@
 4. **Model**: 定義資料結構與資料庫映射。
 
 ## 功能列表
-- 使用者註冊與登入
+- 使用者註冊與登入（規劃中）
 - 發佈文章
 - 編輯文章
 - 刪除文章
@@ -22,23 +22,54 @@
 - 查看文章詳情
 
 ## 技術棧
-- **後端框架**: [待編輯]
-- **資料庫**: [待編輯]
-- **其他工具**: [待編輯]
+- **後端框架**: Node.js + Express
+- **資料庫**: MongoDB（使用 Mongoose ODM）
+- **其他工具**: dotenv（環境變數管理）、nodemon（開發用自動重啟）
+
+## 專案結構
+```
+src/
+  app.js                # 應用主入口
+  controllers/          # 控制器
+  services/             # 業務邏輯
+  repositories/         # 資料存取層
+  models/               # 資料模型
+  routes/               # 路由
+  database/dbConnection.js # MongoDB 連線設定
+  middlewares/          # 中介層
+  utils/                # 工具
+```
 
 ## 如何啟動專案
-1. 克隆此專案到本地：
+1. 複製專案到本地：
     ```bash
-    git clone <git@github.com:cczzHoward/article-practice.git>
+    git clone git@github.com:cczzHoward/article-practice.git
+    cd article-practice
     ```
-2. 待編輯
+2. 安裝依賴：
+    ```bash
+    npm install
+    ```
+3. 建立 `.env` 檔案，內容如下：
+    ```env
+    MONGODB_URI=mongodb://localhost:27017/article-practice
+    ```
+4. 啟動伺服器：
+    ```bash
+    npm run app
+    ```
+5. 伺服器啟動後，預設監聽在 http://localhost:8080
 
 ## 資料庫設計
-[請補充資料庫表結構設計的內容]
+目前已設計 `Article` 資料表，欄位如下：
+- `title` (String, 必填)
+- `author` (String, 必填)
+- `content` (String, 必填)
 
 ## 未來規劃
 - 增加評論功能
 - 增加文章分類功能
 - 增加文章搜尋功能
+- 完成使用者註冊與登入
 
 歡迎提供建議與回饋！
