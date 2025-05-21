@@ -4,7 +4,6 @@ const ArticleModel = require('../models/article');
 const getArticleList = async () => {
     try {
         const articles = await ArticleModel.find();
-        console.log('Articles fetched:', articles);
         return articles;
     } catch (error) {
         logger.error('Error fetching articles:', error);

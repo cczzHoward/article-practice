@@ -23,6 +23,7 @@ router.patch('/:id', (req, res) => {
     ArticleController.updateArticle(req, res);
 });
 
+// 刪除文章(hard delete)
 router.delete('/:id', (req, res) => {
     ArticleController.hardDeleteArticle(req, res);
 });
