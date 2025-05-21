@@ -24,12 +24,13 @@
 ## 技術棧
 - **後端框架**: Node.js + Express
 - **資料庫**: MongoDB（使用 Mongoose ODM）
-- **其他工具**: dotenv（環境變數管理）、nodemon（開發用自動重啟）
+- **其他工具**: dotenv（環境變數管理）、nodemon（開發用自動重啟）、winston（日誌管理）、Postman（API 測試）
 
 ## 專案結構
 ```
 src/
   app.js                # 應用主入口
+  config/               # 設定檔
   controllers/          # 控制器
   services/             # 業務邏輯
   repositories/         # 資料存取層
@@ -38,6 +39,8 @@ src/
   database/dbConnection.js # MongoDB 連線設定
   middlewares/          # 中介層
   utils/                # 工具
+    logger.js           # 日誌工具
+    logs/               # 日誌檔案資料夾
 ```
 
 ## 如何啟動專案
@@ -65,6 +68,10 @@ src/
 - `title` (String, 必填)
 - `author` (String, 必填)
 - `content` (String, 必填)
+
+## 日誌管理
+- 所有 API 請求與錯誤皆會記錄於 `src/utils/logs/combined.log` 及 `error.log`。
+- 日誌格式與等級可於 `src/utils/logger.js` 設定。
 
 ## 未來規劃
 - 增加評論功能
