@@ -3,7 +3,7 @@ const app = express();
 require('dotenv').config();
 
 const ArticleRouter = require('./routes/article');
-const UserRouter = require('./routes/user');
+const AuthRouter = require('./routes/auth');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -16,7 +16,7 @@ app.get('/api', (req, res) => {
   res.json({ message: 'API is working!' });
 });
 
-app.use('/api/v1/users', UserRouter);
+app.use('/api/v1/users', AuthRouter);
 app.use('/api/v1/articles', ArticleRouter);
 
 app.listen(8080, () => {

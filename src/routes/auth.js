@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const AuthController = require('../controllers/auth');
 
 // 用戶註冊
-router.post('/register', async (req, res) => {});
+router.post('/register', async (req, res) => {
+    AuthController.register(req, res)
+});
 
 // 用戶登入
 router.post('/login', async (req, res) => {});
