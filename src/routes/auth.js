@@ -8,7 +8,9 @@ router.post('/register', async (req, res) => {
 });
 
 // 用戶登入
-router.post('/login', async (req, res) => {});
+router.post('/login', async (req, res) => {
+    AuthController.login(req, res)
+});
 
 // 用戶登出
 router.post('/logout', async (req, res) => {});
