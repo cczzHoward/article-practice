@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const logger = require('../utils/logger');
 const ArticleController = require('../controllers/article');
+const passportMiddleware = require('../middlewares/passport');
 
 // 取得文章列表
 router.get('/list', (req, res) => {
