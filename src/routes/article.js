@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../utils/logger');
 const ArticleController = require('../controllers/article');
+const passportMiddleware = require('../middlewares/passport');
 
 // 取得文章列表
 router.get('/list', (req, res) => {
@@ -12,6 +12,9 @@ router.get('/list', (req, res) => {
 router.get('/:id', (req, res) => {
     ArticleController.getArticleById(req, res);
 });
+
+// 以下路由需要身份驗證
+router.use(passportMiddleware.authenticate('jwt', { session: false }));
 
 // 新增文章
 router.post('/', (req, res) => {

@@ -37,6 +37,7 @@ const createArticle = async (articleData) => {
 
 const updateArticle = async (id, articleData) => {
     try {
+        articleData.updateAt = new Date();
         const article = await ArticleModel.findByIdAndUpdate(id, articleData, { new: true });
         if (!article) {
             throw new Error('Article not found');
