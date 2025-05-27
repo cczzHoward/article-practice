@@ -18,6 +18,14 @@ const articleSchema = new Schema({
         required: true,
         trim: true
     },
+    createAt: {
+        type: Date,
+        default: Date.now
+    },
+    updateAt: {
+        type: Date,
+        default: Date.now
+    },
 });
 
 const ArticleModel = connection.model('Article', articleSchema);
