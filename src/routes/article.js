@@ -13,6 +13,9 @@ router.get('/:id', (req, res) => {
     ArticleController.getArticleById(req, res);
 });
 
+// 以下路由需要身份驗證
+router.use(passportMiddleware.authenticate('jwt', { session: false }));
+
 // 新增文章
 router.post('/', (req, res) => {
     ArticleController.createArticle(req, res);
