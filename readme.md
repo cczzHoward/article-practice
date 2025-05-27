@@ -80,6 +80,9 @@ src/
 - `title` (String, 必填)
 - `author` (String, 必填)
 - `content` (String, 必填)
+- `createAt` (Date)
+- `updateAt` (Date)
+
 
 ## 認證與授權
 - 註冊與登入 API 會產生 JWT，前端需將 token 存於 localStorage 或 header。
