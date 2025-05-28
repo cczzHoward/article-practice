@@ -4,10 +4,18 @@ class BaseController {
     constructor(service, resourceName = 'resource') {
         this.service = service;
         this.resourceName = resourceName;
+
+        // 綁定 this
+        this.getAll = this.getAll.bind(this);
+        this.getById = this.getById.bind(this);
+        this.create = this.create.bind(this);
+        this.update = this.update.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     async getAll(req, res) {
         try {
+            console.log(abc);
             const data = await this.service.findAll();
             res.status(200).json(data);
         } catch (error) {
