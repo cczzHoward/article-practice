@@ -2,11 +2,15 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 
+const loggerMiddleware = require('./middlewares/logger');
+
 const ArticleRouter = require('./routes/article');
 const AuthRouter = require('./routes/auth');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(loggerMiddleware.logRequest);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

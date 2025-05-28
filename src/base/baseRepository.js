@@ -3,33 +3,26 @@ class BaseRepository {
     this.model = model;
   }
 
-  async findAll() {
-    return await this.model.findAll();
+  async findAll(filter = {}) {
+    return this.model.find(filter);
   }
 
   async findById(id) {
-    return await this.model.findByPk(id);
+    return this.model.findById(id);
   }
 
   async create(data) {
-    return await this.model.create(data);
+    const doc = new this.model(data);
+    return doc.save();
   }
 
   async update(id, data) {
-    const record = await this.model.findByPk(id);
-    if (record) {
-      return await record.update(data);
-    }
-    throw new Error('Record not found');
+    return this.model.findByIdAndUpdate(id, data, { new: true });
   }
 
   async delete(id) {
-    const record = await this.model.findByPk(id);
-    if (record) {
-      return await record.destroy();
-    }
-    throw new Error('Record not found');
+    return this.model.findByIdAndDelete(id);
   }
 }
 
-module.exports = new BaseRepository();
+module.exports = BaseRepository;
