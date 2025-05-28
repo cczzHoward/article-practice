@@ -3,8 +3,8 @@ const BaseService = require('../base/baseService');
 const jwt = require('jsonwebtoken');
 
 class AuthService extends BaseService {
-    constructor() {
-        super(UserRepository);
+    constructor(repository) {
+        super(repository);
     }
 
     async register(username, password) {
@@ -48,4 +48,4 @@ class AuthService extends BaseService {
     }
 }
 
-module.exports = new AuthService();
+module.exports = new AuthService(UserRepository);

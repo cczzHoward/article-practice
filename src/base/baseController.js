@@ -15,7 +15,6 @@ class BaseController {
 
     async getAll(req, res) {
         try {
-            console.log(abc);
             const data = await this.service.findAll();
             res.status(200).json(data);
         } catch (error) {

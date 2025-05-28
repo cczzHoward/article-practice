@@ -2,8 +2,8 @@ const UserModel = require('../models/user');
 const BaseRepository = require('../base/baseRepository');
 
 class UserRepository extends BaseRepository {
-    constructor() {
-        super(UserModel);
+    constructor(model) {
+        super(model);
     }
 
     // UserRepository 自己特有的方法可以從這裡往下寫
@@ -12,4 +12,4 @@ class UserRepository extends BaseRepository {
     }
 }
 
-module.exports = new UserRepository();
+module.exports = new UserRepository(UserModel);

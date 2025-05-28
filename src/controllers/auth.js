@@ -1,10 +1,9 @@
 const logger = require('../utils/logger');
 const AuthService = require('../services/auth');
-const BaseController = require('../base/baseController');
 
-class AuthController extends BaseController {
-    constructor() {
-        super(AuthService, 'auth');
+class AuthController {
+    constructor(service) {
+        this.service = service;
     }
 
     // 這裡可以覆寫 BaseController 的方法，或添加 AuthController 特有的方法
@@ -55,4 +54,4 @@ class AuthController extends BaseController {
     }
 }
 
-module.exports = new AuthController();
+module.exports = new AuthController(AuthService);
