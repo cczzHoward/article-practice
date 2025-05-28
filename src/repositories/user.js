@@ -7,7 +7,7 @@ class UserRepository extends BaseRepository {
     }
 
     // UserRepository 自己特有的方法可以從這裡往下寫
-    findByUsername(username) {
+    async findByUsername(username) {
         return this.model.findOne({ username });
     }
 }
