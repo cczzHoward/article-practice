@@ -1,17 +1,15 @@
 const UserModel = require('../models/user');
+const BaseRepository = require('../base/baseRepository');
 
-const findByUsername = async (username) => {
-    const user = await UserModel.findOne({ username });
-    return user;
-};
+class UserRepository extends BaseRepository {
+    constructor() {
+        super(UserModel);
+    }
 
-const createUser = async (userData) => {
-    const user = new UserModel(userData);
-    await user.save();
-    return user;
-};
+    // UserRepository 自己特有的方法可以從這裡往下寫
+    findByUsername(username) {
+        return this.model.findOne({ username });
+    }
+}
 
-module.exports = {
-    createUser,
-    findByUsername,
-};
+module.exports = new UserRepository();

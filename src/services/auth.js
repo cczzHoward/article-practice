@@ -1,47 +1,96 @@
 const UserRepository = require('../repositories/user');
+const BaseService = require('../base/baseService');
 const jwt = require('jsonwebtoken');
 
-const register = async (username, password) => {
-    // 檢查用戶是否已存在，如果存在則返回錯誤
-    const existingUser = await UserRepository.findByUsername(username);
-    if (existingUser) {
-        throw new Error('User already exists');
+class AuthService extends BaseService {
+    constructor() {
+        super(UserRepository);
     }
 
-    // 創建新用戶
-    const newUser = await UserRepository.createUser({
-        username,
-        password,
-    });
-    return newUser;
+    async register(username, password) {
+        // 檢查用戶是否已存在，如果存在則返回錯誤
+        const existingUser = await UserRepository.findByUsername(username);
+        if (existingUser) {
+            throw new Error('User already exists');
+        }
+
+        // 創建新用戶
+        const newUser = await UserRepository.create({
+            username,
+            password,
+        });
+        return newUser;
+    }
+
+    async login(username, password) {
+        // 檢查用戶是否存在
+        const user = await UserRepository.findByUsername(username);
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        // 檢查密碼是否正確
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            throw new Error('Invalid password');
+        }
+
+        // 生成 JWT token
+        const tokenObject = {
+            id: user._id,
+            username: user.username,
+        };
+        const jwtToken = jwt.sign(tokenObject, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRATION || '1h',
+        });
+
+        return jwtToken;
+    }
 }
 
-const login = async (username, password) => {
-    // 檢查用戶是否存在
-    const user = await UserRepository.findByUsername(username);
-    if (!user) {
-        throw new Error('User not found');
-    }
+// const register = async (username, password) => {
+//     // 檢查用戶是否已存在，如果存在則返回錯誤
+//     const existingUser = await UserRepository.findByUsername(username);
+//     if (existingUser) {
+//         throw new Error('User already exists');
+//     }
 
-    // 檢查密碼是否正確
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-        throw new Error('Invalid password');
-    }
+//     // 創建新用戶
+//     const newUser = await UserRepository.createUser({
+//         username,
+//         password,
+//     });
+//     return newUser;
+// }
 
-    // 生成 JWT token
-    const tokenObject = {
-        id: user._id,
-        username: user.username,
-    };
-    const jwtToken = jwt.sign(tokenObject, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRATION || '1h',
-    });
+// const login = async (username, password) => {
+//     // 檢查用戶是否存在
+//     const user = await UserRepository.findByUsername(username);
+//     if (!user) {
+//         throw new Error('User not found');
+//     }
 
-    return jwtToken;
-};
+//     // 檢查密碼是否正確
+//     const isMatch = await user.comparePassword(password);
+//     if (!isMatch) {
+//         throw new Error('Invalid password');
+//     }
 
-module.exports = {
-    register,
-    login,
-};
+//     // 生成 JWT token
+//     const tokenObject = {
+//         id: user._id,
+//         username: user.username,
+//     };
+//     const jwtToken = jwt.sign(tokenObject, process.env.JWT_SECRET, {
+//         expiresIn: process.env.JWT_EXPIRATION || '1h',
+//     });
+
+//     return jwtToken;
+// };
+
+// module.exports = {
+//     register,
+//     login,
+// };
+
+module.exports = new AuthService();

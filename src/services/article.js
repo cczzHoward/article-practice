@@ -1,4 +1,3 @@
-const logger = require('../utils/logger');
 const ArticleRepository = require('../repositories/article');
 const BaseService = require('../base/baseService');
 

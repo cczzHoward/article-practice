@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const connection = require('../database/dbConnection');
 const bcrypt = require('bcrypt');
+const BaseSchema = require('../base/baseSchema');
 
 const userSchema = new Schema({
     username: {
@@ -15,15 +16,9 @@ const userSchema = new Schema({
         required: true,
         trim: true,
     },
-    createAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updateAt: {
-        type: Date,
-        default: Date.now,
-    },
 });
+
+userSchema.plugin(BaseSchema);
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
     try {
@@ -44,6 +39,6 @@ userSchema.pre('save', async function (next) {
     }
 });
 
-const User = connection.model('User', userSchema);
+const UserModel = connection.model('User', userSchema);
 
-module.exports = User;
+module.exports = UserModel;

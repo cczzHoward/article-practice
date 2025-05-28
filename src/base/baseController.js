@@ -6,7 +6,7 @@ class BaseController {
         this.resourceName = resourceName;
     }
 
-    getAll = async (req, res) => {
+    async getAll(req, res) {
         try {
             const data = await this.service.findAll();
             res.status(200).json(data);
@@ -16,7 +16,7 @@ class BaseController {
         }
     };
 
-    getById = async (req, res) => {
+    async getById(req, res) {
         try {
             const data = await this.service.findById(req.params.id);
             if (!data) {
@@ -30,7 +30,7 @@ class BaseController {
         }
     };
 
-    create = async (req, res) => {
+    async create(req, res) {
         try {
             const data = await this.service.create(req.body);
             res.status(201).json(data);
@@ -40,7 +40,7 @@ class BaseController {
         }
     };
 
-    update = async (req, res) => {
+    async update(req, res) {
         try {
             const data = await this.service.update(req.params.id, req.body);
             res.status(200).json(data);
@@ -50,7 +50,7 @@ class BaseController {
         }
     };
 
-    delete = async (req, res) => {
+    async delete(req, res) {
         try {
             const data = await this.service.delete(req.params.id);
             res.status(200).json(data);
