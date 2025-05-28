@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const connection = require('../database/dbConnection');
+const BaseSchema = require('../base/baseSchema')
 
 const articleSchema = new Schema({
     title: {
@@ -17,16 +18,10 @@ const articleSchema = new Schema({
         type: String,
         required: true,
         trim: true
-    },
-    createAt: {
-        type: Date,
-        default: Date.now
-    },
-    updateAt: {
-        type: Date,
-        default: Date.now
-    },
+    }
 });
+
+articleSchema.plugin(BaseSchema); // Apply the base schema plugin
 
 const ArticleModel = connection.model('Article', articleSchema);
 

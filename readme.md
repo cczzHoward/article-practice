@@ -1,55 +1,79 @@
 # 部落格 API 練習專案
 
-這是一個以部落格為主題的練習專案，主要目的是熟悉使用 `Controller -> Service -> Repository -> Model` 架構來開發 API，並實作 JWT 驗證的登入/登出功能。
+這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的登入/登出功能與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性。
 
 ## 專案目標
-- 學習並實踐分層架構的設計模式。
-- 提升 API 開發的技能。
-- 熟悉資料庫操作與模型設計。
-- 實作安全的使用者認證與授權。
+- 學習並實踐分層架構設計
+- 熟悉 Express 與 MongoDB 開發
+- 實作安全的使用者認證與授權
+- 提升 API 開發與維護能力
 
 ## 架構說明
-1. **Controller**: 負責處理 HTTP 請求，並將請求轉發給對應的 Service。
-2. **Service**: 負責業務邏輯處理，並與 Repository 進行互動。
-3. **Repository**: 負責與資料庫進行操作。
-4. **Model**: 定義資料結構與資料庫映射。
+- **Controller**：處理 HTTP 請求與回應，調用 Service。
+- **Service**：處理業務邏輯，調用 Repository。
+- **Repository**：負責資料存取，與 Model 互動。
+- **Model**：定義資料結構與 schema。
+- **Base 層**：抽象出 CRUD 共用邏輯，所有資源繼承 base 類別。
+- **Middleware**：如 logger、passport 驗證等。
 
 ## 功能列表
 - [x] 使用者註冊與登入（JWT 驗證）
 - [x] 使用者登出（前端移除 token）
-- [x] 發佈文章
-- [x] 編輯文章
-- [x] 刪除文章
-- [x] 瀏覽文章列表
-- [x] 查看文章詳情
+- [x] 發佈、編輯、刪除文章（需登入）
+- [x] 瀏覽文章列表、查看文章詳情（公開）
+- [x] 日誌紀錄（winston）
+- [x] 基礎 CRUD base 類別實作
 
 ## 技術棧
-- **後端框架**: Node.js + Express
-- **資料庫**: MongoDB（使用 Mongoose ODM）
-- **認證**: JWT + Passport + bcrypt
-- **其他工具**: dotenv（環境變數管理）、nodemon（開發用自動重啟）、winston（日誌管理）、Postman（API 測試）
+- **後端框架**：Node.js + Express
+- **資料庫**：MongoDB（Mongoose ODM）
+- **認證**：JWT + Passport + bcrypt
+- **日誌**：winston
+- **其他工具**：dotenv、nodemon、Postman
 
 ## 專案結構
 ```
 src/
-  app.js                # 應用主入口
-  config/               # 設定檔（如 passport.js）
-  controllers/          # 控制器
-  services/             # 業務邏輯
-  repositories/         # 資料存取層
-  models/               # 資料模型
-  routes/               # 路由
-  database/dbConnection.js # MongoDB 連線設定
-  middlewares/          # 中介層（如 passport.js, auth.js）
-  utils/                # 工具
-    logger.js           # 日誌工具
-    logs/               # 日誌檔案資料夾
+  app.js
+  base/
+    baseController.js
+    baseRepository.js
+    baseSchema.js
+    baseService.js
+  config/
+    passport.js
+  controllers/
+    article.js
+    auth.js
+  database/
+    dbConnection.js
+  middlewares/
+    auth.js
+    logger.js
+    passport.js
+  models/
+    article.js
+    user.js
+  repositories/
+    article.js
+    user.js
+  routes/
+    article.js
+    auth.js
+  services/
+    article.js
+    auth.js
+  utils/
+    logger.js
+    logs/
+      combined.log
+      error.log
 ```
 
 ## 如何啟動專案
 1. 複製專案到本地：
     ```bash
-    git clone git@github.com:cczzHoward/article-practice.git
+    git clone <your-repo-url>
     cd article-practice
     ```
 2. 安裝依賴：
@@ -73,16 +97,15 @@ src/
 ### User
 - `username` (String, 必填, 唯一)
 - `password` (String, 必填, 加密)
-- `createAt` (Date)
-- `updateAt` (Date)
+- `created_at` (Date)
+- `updated_at` (Date)
 
 ### Article
 - `title` (String, 必填)
 - `author` (String, 必填)
 - `content` (String, 必填)
-- `createAt` (Date)
-- `updateAt` (Date)
-
+- `created_at` (Date)
+- `updated_at` (Date)
 
 ## 認證與授權
 - 註冊與登入 API 會產生 JWT，前端需將 token 存於 localStorage 或 header。
