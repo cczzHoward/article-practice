@@ -52,6 +52,25 @@ class AuthController {
             res.status(500).json({ message: 'Internal server error' });
         }
     }
+
+    async changePassword(req, res) {
+        try {
+            const { oldPassword, newPassword } = req.body;
+
+            // 檢查舊密碼和新密碼是否存在
+            if (!oldPassword || !newPassword) {
+                return res.status(400).json({ message: 'Old password and new password are required' });
+            }
+
+            // 使用 req.user._id 獲取當前用戶並更改密碼
+            const userId = req.user._id; // 假設使用者 ID 存在於 req.user 中
+            await AuthService.changePassword(userId, newPassword);
+            res.status(200).json({ message: 'Password changed successfully' });
+        } catch (error) {
+            logger.error('Error in changePassword:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
 }
 
 module.exports = new AuthController(AuthService);

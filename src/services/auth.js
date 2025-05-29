@@ -46,6 +46,18 @@ class AuthService extends BaseService {
 
         return jwtToken;
     }
+
+    async changePassword(userId, newPassword) {
+        // 先查出 user 實例
+        const user = await UserRepository.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        
+        user.password = newPassword;
+        await user.save(); // 這裡會自動 hash 密碼
+        return user;
+    }
 }
 
 module.exports = new AuthService(UserRepository);
