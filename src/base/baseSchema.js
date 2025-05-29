@@ -10,6 +10,16 @@ function baseSchemaPlugin(schema) {
         }
     });
 
+    schema.options.versionKey = false; // Disable version key (__v)
+
+    schema.options.toJSON = {
+        transform: function (doc, ret) {
+            ret.id = doc._id;
+            delete ret._id;
+            return ret;
+        }
+    };
+
     schema.pre('save', function (next) {
         this.updated_at = Date.now();
         if (!this.created_at) {
