@@ -1,6 +1,6 @@
 # 部落格 API 練習專案
 
-這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的登入/登出功能與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性。
+這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的註冊、登入、登出、變更密碼與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性。
 
 ## 專案目標
 - 學習並實踐分層架構設計
@@ -19,6 +19,7 @@
 ## 功能列表
 - [x] 使用者註冊與登入（JWT 驗證）
 - [x] 使用者登出（前端移除 token）
+- [x] 變更密碼（需登入）
 - [x] 發佈、編輯、刪除文章（需登入）
 - [x] 瀏覽文章列表、查看文章詳情（公開）
 - [x] 日誌紀錄（winston）
@@ -93,6 +94,18 @@ src/
     ```
 5. 伺服器啟動後，預設監聽在 http://localhost:8080
 
+## 主要 API 路徑範例
+
+- `POST   /api/v1/users/register`         註冊
+- `POST   /api/v1/users/login`            登入
+- `POST   /api/v1/users/change-password`  變更密碼（需登入）
+- `POST   /api/v1/users/logout`           登出（前端移除 token）
+- `GET    /api/v1/articles/list`          文章列表（公開）
+- `GET    /api/v1/articles/:id`           文章詳情（公開）
+- `POST   /api/v1/articles/`              新增文章（需登入）
+- `PATCH  /api/v1/articles/:id`           編輯文章（需登入）
+- `DELETE /api/v1/articles/:id`           刪除文章（需登入）
+
 ## 資料庫設計
 ### User
 - `username` (String, 必填, 唯一)
@@ -112,6 +125,7 @@ src/
 - 受保護的 API 需在 header 加上 `Authorization: Bearer <token>`。
 - 使用 passport-jwt 驗證 token，並將用戶資訊掛載於 `req.user`。
 - 密碼加密採用 bcrypt。
+- 登出僅需前端移除 token，後端不維護黑名單。
 
 ## 日誌管理
 - 所有 API 請求與錯誤皆會記錄於 `src/utils/logs/combined.log` 及 `error.log`。
