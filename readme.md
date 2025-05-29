@@ -1,6 +1,6 @@
 # 部落格 API 練習專案
 
-這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的註冊、登入、登出、變更密碼與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性。
+這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的註冊、登入、登出、變更密碼與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性，並統一 API 回應格式。
 
 ## 專案目標
 - 學習並實踐分層架構設計
@@ -15,6 +15,7 @@
 - **Model**：定義資料結構與 schema。
 - **Base 層**：抽象出 CRUD 共用邏輯，所有資源繼承 base 類別。
 - **Middleware**：如 logger、passport 驗證等。
+- **Utils**：統一回應格式、日誌等工具。
 
 ## 功能列表
 - [x] 使用者註冊與登入（JWT 驗證）
@@ -23,6 +24,7 @@
 - [x] 發佈、編輯、刪除文章（需登入）
 - [x] 瀏覽文章列表、查看文章詳情（公開）
 - [x] 日誌紀錄（winston）
+- [x] 統一 API 回應格式
 - [x] 基礎 CRUD base 類別實作
 
 ## 技術棧
@@ -66,6 +68,7 @@ src/
     auth.js
   utils/
     logger.js
+    response.js
     logs/
       combined.log
       error.log
@@ -119,6 +122,24 @@ src/
 - `content` (String, 必填)
 - `created_at` (Date)
 - `updated_at` (Date)
+
+## 統一回應格式
+所有 API 回應皆為以下格式：
+```json
+{
+  "success": true,
+  "message": "操作成功",
+  "data": { ... }
+}
+```
+或
+```json
+{
+  "success": false,
+  "message": "錯誤訊息",
+  "data": null
+}
+```
 
 ## 認證與授權
 - 註冊與登入 API 會產生 JWT，前端需將 token 存於 localStorage 或 header。
