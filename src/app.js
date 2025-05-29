@@ -3,6 +3,7 @@ const app = express();
 require('dotenv').config();
 
 const loggerMiddleware = require('./middlewares/logger');
+const responseUtils = require('./utils/response');
 
 const ArticleRouter = require('./routes/article');
 const AuthRouter = require('./routes/auth');
@@ -13,11 +14,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware.logRequest);
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  responseUtils.success(res, null, 'Root endpoint is working!');
 });
 
 app.get('/api', (req, res) => {
-  res.json({ message: 'API is working!' });
+  responseUtils.success(res, null, 'API is working!');
 });
 
 app.use('/api/v1/users', AuthRouter);

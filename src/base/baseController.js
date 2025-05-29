@@ -31,7 +31,7 @@ class BaseController {
                 logger.warn(`${this.resourceName} with ID ${req.params.id} not found`);
                 responseUtils.notFound(res, `${this.resourceName} not found`);
             }
-            res.status(200).json(data);
+            responseUtils.success(res, data);
         } catch (error) {
             logger.error(`Error fetching ${this.resourceName} by ID:`, error);
             responseUtils.error(res, `Error fetching ${this.resourceName} by ID`);

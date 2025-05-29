@@ -1,5 +1,6 @@
 const logger = require('../utils/logger');
 const AuthService = require('../services/auth');
+const responseUtils = require('../utils/response');
 
 class AuthController {
     constructor(service) {
@@ -13,20 +14,21 @@ class AuthController {
 
             // 檢查用戶名和密碼是否存在
             if (!username || !password) {
-                return res.status(400).json({ message: 'Username and password are required' });
+                responseUtils.badRequest(res, 'Username and password are required');
             }
 
             const newUser = await AuthService.register(username, password);
-            res.status(201).json({
-                message: 'User registered successfully',
-                user: {
+            responseUtils.created(
+                res, 
+                {
                     id: newUser._id,
                     username: newUser.username,
                 },
-            });
+                'User registered successfully'
+            )
         } catch (error) {
             logger.error('Error in register:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            responseUtils.error(res, 'Internal server error');
         }
     }
 
@@ -36,20 +38,21 @@ class AuthController {
 
             // 檢查用戶名和密碼是否存在
             if (!username || !password) {
-                return res.status(400).json({ message: 'Username and password are required' });
+                responseUtils.badRequest(res, 'Username and password are required');
             }
 
             const jwtToken = await AuthService.login(username, password);
             if (!jwtToken) {
-                return res.status(401).json({ message: 'Invalid username or password' });
+                responseUtils.unauthorized(res, 'Invalid username or password');
             }
-            res.status(200).json({
-                message: 'User logged in successfully',
-                token: jwtToken
-            });
+            responseUtils.success(
+                res, 
+                { token: jwtToken }, 
+                'User logged in successfully'
+            );
         } catch (error) {
             logger.error('Error in login:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            responseUtils.error(res, 'Internal server error');
         }
     }
 
@@ -59,16 +62,20 @@ class AuthController {
 
             // 檢查舊密碼和新密碼是否存在
             if (!oldPassword || !newPassword) {
-                return res.status(400).json({ message: 'Old password and new password are required' });
+                responseUtils.badRequest(res, 'Old password and new password are required');
             }
 
             // 使用 req.user._id 獲取當前用戶並更改密碼
             const userId = req.user._id; // 假設使用者 ID 存在於 req.user 中
             await AuthService.changePassword(userId, newPassword);
-            res.status(200).json({ message: 'Password changed successfully' });
+            responseUtils.success(
+                res, 
+                null,
+                'Password changed successfully'
+            );
         } catch (error) {
             logger.error('Error in changePassword:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            responseUtils.error(res, 'Internal server error');
         }
     }
 }
