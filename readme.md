@@ -119,7 +119,7 @@ src/
 - `POST   /api/v1/users/register`         註冊
 - `POST   /api/v1/users/login`            登入
 - `POST   /api/v1/users/change-password`  變更密碼（需登入）
-- `POST   /api/v1/users/logout`           登出（前端移除 token）
+- `POST   /api/v1/users/logout`           登出（前端移除 token，無後端 API）
 - `GET    /api/v1/articles/list`          文章列表（公開）
 - `GET    /api/v1/articles/:id`           文章詳情（公開）
 - `POST   /api/v1/articles/`              新增文章（需登入）
@@ -135,7 +135,7 @@ src/
 
 ### Article
 - `title` (String, 必填)
-- `author` (String, 必填)
+- `author` (ObjectId, 必填, 參照 User)
 - `content` (String, 必填)
 - `created_at` (Date)
 - `updated_at` (Date)
@@ -166,7 +166,7 @@ src/
 - 登出僅需前端移除 token，後端不維護黑名單。
 
 ## Joi Validator 使用說明
-- 所有請求參數驗證皆集中於 `src/validators/`，每個資源一個檔案（如 `user.js`, `article.js`）。
+- 所有請求參數驗證皆集中於 `src/validators/`，每個資源一個檔案（如 `auth.js`, `article.js`）。
 - 驗證 middleware 統一由 `validate.js` 提供，路由中直接使用。
 - **目前為了避免未通過驗證時直接出現 server internal error，所有 Joi schema 都有加上 `.required()`（即要求 body 必須有內容）。未來會將 `.required()` 移除，並加強 error 處理，讓錯誤訊息更友善。**
 - 範例：
@@ -185,10 +185,17 @@ src/
 - 所有 API 請求與錯誤皆會記錄於 `src/utils/logs/combined.log` 及 `error.log`。
 - 日誌格式與等級可於 `src/utils/logger.js` 設定。
 
+## 文章搜尋與分頁
+- `/api/v1/articles/list` 路由支援 `keyword`（標題/內容模糊搜尋）、`page`（分頁，預設 1）、`limit`（每頁筆數，預設 10）等 query string。
+- 回傳格式包含：`data`（文章陣列）、`total`（總筆數）、`page`、`limit`、`totalPages`。
+- 範例：
+    ```
+    GET /api/v1/articles/list?keyword=node&page=2&limit=5
+    ```
+
 ## 未來規劃
 - 增加評論功能
 - 增加文章分類功能
-- 增加文章搜尋功能
 - 完善使用者權限管理
 
 歡迎提供建議與回饋！
