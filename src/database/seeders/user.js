@@ -1,22 +1,16 @@
 const UserModel = require('../../models/user');
 
 const users = [
-    {
-        username: 'admin',
-        password: 'admin123',
-    },
-    {
-        username: 'test123',
-        password: 'test123',
-    },
-    {
-        username: 'jane',
-        password: 'jane123',
-    },
-    {
-        username: 'john',
-        password: 'john123',
-    },
+    { username: 'admin', password: 'admin123' },
+    { username: 'test123', password: 'test123' },
+    { username: 'jane', password: 'jane123' },
+    { username: 'john', password: 'john123' },
+    { username: 'alice', password: 'alice123' },
+    { username: 'bob', password: 'bob123' },
+    { username: 'charlie', password: 'charlie123' },
+    { username: 'david', password: 'david123' },
+    { username: 'eva', password: 'eva123' },
+    { username: 'frank', password: 'frank123' }
 ];
 
 async function seedUsers() {
