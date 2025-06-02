@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const ArticleController = require('../controllers/article');
 const passportMiddleware = require('../middlewares/passport');
+const validate = require('../validators/validate');
+const ArticleValidator = require('../validators/article');
 
 // 取得文章列表
 router.get('/list',
@@ -18,11 +20,13 @@ router.use(passportMiddleware.authenticate('jwt', { session: false }));
 
 // 新增文章
 router.post('/',
+    validate(ArticleValidator.createArticleSchema),
     ArticleController.create,
 );
 
 // 更新文章
 router.patch('/:id',
+    validate(ArticleValidator.updateArticleSchema),
     ArticleController.update,
 );
 
