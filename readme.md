@@ -16,6 +16,7 @@
 - **Base 層**：抽象出 CRUD 共用邏輯，所有資源繼承 base 類別。
 - **Middleware**：如 logger、passport 驗證等。
 - **Utils**：統一回應格式、日誌等工具。
+- **Validator**：集中管理 Joi 驗證規則與 middleware。
 - **Seeder**：資料初始化腳本，快速建立測試資料。
 
 ## 功能列表
@@ -26,6 +27,7 @@
 - [x] 瀏覽文章列表、查看文章詳情（公開）
 - [x] 日誌紀錄（winston）
 - [x] 統一 API 回應格式
+- [x] Joi Validator（統一請求參數驗證）
 - [x] 基礎 CRUD base 類別實作
 - [x] Seeder（資料初始化腳本）
 
@@ -33,6 +35,7 @@
 - **後端框架**：Node.js + Express
 - **資料庫**：MongoDB（Mongoose ODM）
 - **認證**：JWT + Passport + bcrypt
+- **驗證**：Joi
 - **日誌**：winston
 - **其他工具**：dotenv、nodemon、Postman
 
@@ -78,6 +81,10 @@ src/
     logs/
       combined.log
       error.log
+  validators/
+    article.js
+    auth.js
+    validate.js
 ```
 
 ## 如何啟動專案
@@ -158,6 +165,22 @@ src/
 - 密碼加密採用 bcrypt。
 - 登出僅需前端移除 token，後端不維護黑名單。
 
+## Joi Validator 使用說明
+- 所有請求參數驗證皆集中於 `src/validators/`，每個資源一個檔案（如 `user.js`, `article.js`）。
+- 驗證 middleware 統一由 `validate.js` 提供，路由中直接使用。
+- **目前為了避免未通過驗證時直接出現 server internal error，所有 Joi schema 都有加上 `.required()`（即要求 body 必須有內容）。未來會將 `.required()` 移除，並加強 error 處理，讓錯誤訊息更友善。**
+- 範例：
+    ```js
+    const validate = require('../validators/validate');
+    const { registerSchema } = require('../validators/auth');
+    router.post('/register', validate(registerSchema), AuthController.register);
+    ```
+
+## Seeder 使用說明
+- Seeder 腳本集中於 `src/database/seeders/`。
+- 執行 `npm run seed` 會自動初始化預設用戶與文章資料。
+- 可依需求擴充更多 seeder 檔案。
+
 ## 日誌管理
 - 所有 API 請求與錯誤皆會記錄於 `src/utils/logs/combined.log` 及 `error.log`。
 - 日誌格式與等級可於 `src/utils/logger.js` 設定。
@@ -167,6 +190,5 @@ src/
 - 增加文章分類功能
 - 增加文章搜尋功能
 - 完善使用者權限管理
-- 增加 Validator（統一請求參數驗證）
 
 歡迎提供建議與回饋！
