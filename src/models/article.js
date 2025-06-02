@@ -10,9 +10,9 @@ const articleSchema = new Schema({
         trim: true
     },
     author: {
-        type: String,
-        required: true,
-        trim: true
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     content: {
         type: String,

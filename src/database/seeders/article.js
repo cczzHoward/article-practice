@@ -1,6 +1,7 @@
 const ArticleModel = require('../../models/article');
+const UserModel = require('../../models/user');
 
-const articles = [
+const articlesData = [
     { title: 'Hello World', author: 'admin', content: 'This is the first article.' },
     { title: 'Second Post', author: 'test123', content: 'Another article content.' },
     { title: 'Tech Trends 2024', author: 'jane', content: 'Exploring the latest in technology for 2024.' },
@@ -35,6 +36,20 @@ const articles = [
 
 async function seedArticles() {
   await ArticleModel.deleteMany({});
+
+  // 取得所有 user 的 ObjectId 對照表
+  const users = await UserModel.find({}, 'username _id');
+  const userMap = {};
+  users.forEach(user => {
+      userMap[user.username] = user._id;
+  });
+
+  // 將 author 由 username 轉成 ObjectId
+  const articles = articlesData.map(article => ({
+      ...article,
+      author: userMap[article.author], // 轉成 ObjectId
+  }));
+
   await ArticleModel.insertMany(articles);
   console.log('Article seeding done!');
 }
