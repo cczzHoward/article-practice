@@ -1,6 +1,6 @@
 # 部落格 API 練習專案
 
-這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的註冊、登入、登出、變更密碼與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性，並統一 API 回應格式。
+這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的註冊、登入、登出、變更密碼與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性，並統一 API 回應格式。  
 
 ## 專案目標
 - 學習並實踐分層架構設計
@@ -16,6 +16,7 @@
 - **Base 層**：抽象出 CRUD 共用邏輯，所有資源繼承 base 類別。
 - **Middleware**：如 logger、passport 驗證等。
 - **Utils**：統一回應格式、日誌等工具。
+- **Seeder**：資料初始化腳本，快速建立測試資料。
 
 ## 功能列表
 - [x] 使用者註冊與登入（JWT 驗證）
@@ -26,6 +27,7 @@
 - [x] 日誌紀錄（winston）
 - [x] 統一 API 回應格式
 - [x] 基礎 CRUD base 類別實作
+- [x] Seeder（資料初始化腳本）
 
 ## 技術棧
 - **後端框架**：Node.js + Express
@@ -50,6 +52,10 @@ src/
     auth.js
   database/
     dbConnection.js
+    seeders/
+      user.js
+      article.js
+      index.js
   middlewares/
     auth.js
     logger.js
@@ -95,7 +101,11 @@ src/
     ```bash
     npm run app
     ```
-5. 伺服器啟動後，預設監聽在 http://localhost:8080
+5. 執行 Seeder 初始化資料：
+    ```bash
+    npm run seed
+    ```
+6. 伺服器啟動後，預設監聽在 http://localhost:8080
 
 ## 主要 API 路徑範例
 
@@ -157,7 +167,6 @@ src/
 - 增加文章分類功能
 - 增加文章搜尋功能
 - 完善使用者權限管理
-- 增加 DB Seeder（資料初始化腳本）
 - 增加 Validator（統一請求參數驗證）
 
 歡迎提供建議與回饋！
