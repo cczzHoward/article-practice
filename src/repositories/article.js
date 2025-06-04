@@ -19,7 +19,7 @@ class ArticleRepository extends BaseRepository {
         .populate('category', 'name -_id');
     }
 
-    async searchAndPaginate({ keyword, page, limit }) {
+    async searchAndPaginate({ keyword, category, page, limit }) {
         const filter = {};
         if (keyword) {
             filter.$or = [
@@ -27,15 +27,18 @@ class ArticleRepository extends BaseRepository {
                 { content: { $regex: keyword, $options: 'i' } }
             ];
         }
+        if (category) {
+            filter.category = category;
+        }
         const skip = (page - 1) * limit;
         const [data, total] = await Promise.all([
-            ArticleModel.find(filter)
+            this.model.find(filter)
                 .populate('author', 'username -_id')
                 .populate('category', 'name -_id')
                 .skip(skip)
                 .limit(limit)
                 .sort({ created_at: -1 }),
-            ArticleModel.countDocuments(filter)
+            this.model.countDocuments(filter)
         ]);
         return {
             data,
@@ -45,6 +48,11 @@ class ArticleRepository extends BaseRepository {
             totalPages: Math.ceil(total / limit)
         };
     }
+
+    async getCategoryIdByName(categoryName) {
+        return this.model.find({ category: categoryName }).select('category');
+    }
+
 }
 
 module.exports = new ArticleRepository(ArticleModel);

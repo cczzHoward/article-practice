@@ -7,6 +7,9 @@ class CategoryRepository extends BaseRepository {
     }
 
     // CategoryRepository 自己特有的方法可以從這裡往下寫
+    async findOneByName(name) {
+        return this.model.findOne({ name }).select('_id name');
+    }
 }
 
 module.exports = new CategoryRepository(CategoryModel);

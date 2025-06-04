@@ -1,4 +1,5 @@
 const ArticleRepository = require('../repositories/article');
+const CategoryRepository = require('../repositories/category');
 const BaseService = require('../base/baseService');
 
 class ArticleService extends BaseService {
@@ -7,8 +8,12 @@ class ArticleService extends BaseService {
     }
 
     // ArticleService 自己特有的方法可以從這裡往下寫
-    async searchAndPaginate({ keyword, page , limit }) {
-        return this.repository.searchAndPaginate({ keyword, page, limit });
+    async searchAndPaginate({ keyword, category,page , limit }) {
+        return this.repository.searchAndPaginate({ keyword, category, page, limit });
+    }
+
+    async getCategoryIdByName(categoryName) {
+        return CategoryRepository.findOneByName(categoryName);
     }
 }
 
