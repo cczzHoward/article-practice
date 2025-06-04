@@ -21,6 +21,18 @@ const getAllArticlesSchema = Joi.object({
 const createArticleSchema = Joi.object({
     title: Joi.string().min(1).max(128).required(),
     content: Joi.string().min(1).max(25565).required(),
+    category: Joi.string().valid(
+        '技術新知',
+        '前端',
+        '後端',
+        '資料庫',
+        '測試',
+        '安全',
+        'API 設計',
+        '部署與維運',
+        '使用者體驗',
+        '其他'
+    ).required(),
 })
 .required();
 

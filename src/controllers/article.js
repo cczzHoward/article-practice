@@ -37,7 +37,20 @@ class ArticleController extends BaseController {
 
     async create(req, res) {
         try {
-            const data = await this.service.create(req.body);
+            const { title, content, category } = req.body;
+            
+            const categoryId = await this.service.getCategoryIdByName(category);
+            if (!categoryId) {
+                return responseUtils.badRequest(res, 'Category not found');
+            }
+
+            const articleData = {
+                title,
+                content,
+                category: categoryId._id,
+                author: req.user.id
+            }
+            const data = await this.service.create(articleData);
             responseUtils.created(res, data, `${this.resourceName} created successfully`);
         } catch (error) {
             logger.error(`Error creating ${this.resourceName}:`, error);
