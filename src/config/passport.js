@@ -12,7 +12,11 @@ module.exports = (passport) => {
             try {
                 const user = await UserModel.findById(jwt_payload.id);
                 if (user) {
-                    return done(null, user);
+                    const returnedUser = {
+                        id: user._id,
+                        username: user.username,
+                    }
+                    return done(null, returnedUser);
                 } else {
                     return done(null, false);
                 }

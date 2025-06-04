@@ -34,6 +34,16 @@ class ArticleController extends BaseController {
             responseUtils.error(res, 'Internal server error');
         }
     }
+
+    async create(req, res) {
+        try {
+            const data = await this.service.create(req.body);
+            responseUtils.created(res, data, `${this.resourceName} created successfully`);
+        } catch (error) {
+            logger.error(`Error creating ${this.resourceName}:`, error);
+            responseUtils.error(res, `Error creating ${this.resourceName}`);
+        }
+    };
 }
 
 module.exports = new ArticleController(ArticleService, 'article');
