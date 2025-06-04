@@ -12,13 +12,8 @@ class AuthController {
         try {
             const { username, password } = req.body;
 
-            // 檢查用戶名和密碼是否存在
-            if (!username || !password) {
-                responseUtils.badRequest(res, 'Username and password are required');
-            }
-
             const newUser = await AuthService.register(username, password);
-            responseUtils.created(
+            return responseUtils.created(
                 res, 
                 {
                     id: newUser._id,
@@ -28,7 +23,12 @@ class AuthController {
             )
         } catch (error) {
             logger.error('Error in register:', error);
-            responseUtils.error(res, 'Internal server error');
+
+            if (error.message === 'User already exists') {
+                return responseUtils.conflict(res, 'User already exists');
+            }
+
+            return responseUtils.error(res, 'Internal server error');
         }
     }
 
@@ -36,22 +36,22 @@ class AuthController {
         try {
             const { username, password } = req.body;
 
-            // 檢查用戶名和密碼是否存在
-            if (!username || !password) {
-                responseUtils.badRequest(res, 'Username and password are required');
-            }
-
             const jwtToken = await AuthService.login(username, password);
             if (!jwtToken) {
-                responseUtils.unauthorized(res, 'Invalid username or password');
+                return responseUtils.unauthorized(res, 'Invalid username or password');
             }
-            responseUtils.success(
+            return responseUtils.success(
                 res, 
                 { token: jwtToken }, 
                 'User logged in successfully'
             );
         } catch (error) {
             logger.error('Error in login:', error);
+
+            if (error.message === 'User not found' || error.message === 'Invalid password') {
+                return responseUtils.unauthorized(res, 'Invalid username or password');
+            }
+
             responseUtils.error(res, 'Internal server error');
         }
     }
@@ -59,11 +59,6 @@ class AuthController {
     async changePassword(req, res) {
         try {
             const { oldPassword, newPassword } = req.body;
-
-            // 檢查舊密碼和新密碼是否存在
-            if (!oldPassword || !newPassword) {
-                responseUtils.badRequest(res, 'Old password and new password are required');
-            }
 
             // 使用 req.user._id 獲取當前用戶並更改密碼
             const userId = req.user._id; // 假設使用者 ID 存在於 req.user 中
@@ -75,6 +70,11 @@ class AuthController {
             );
         } catch (error) {
             logger.error('Error in changePassword:', error);
+
+            if (error.message === 'User not found') {
+                return responseUtils.notFound(res, 'User not found');
+            };
+
             responseUtils.error(res, 'Internal server error');
         }
     }

@@ -26,6 +26,10 @@ function notFound(res, message = 'not found', data = null) {
     return res.status(404).json({ success: false, message, data });
 }
 
+function conflict(res, message = 'conflict', data = null) {
+    return res.status(409).json({ success: false, message, data });
+}
+
 function error(res, message = 'error', code = 500, data = null) {
     return res.status(code).json({ success: false, message, data });
 }
@@ -38,5 +42,6 @@ module.exports = {
     unauthorized,
     forbidden,
     notFound,
+    conflict,
     error
 };
