@@ -29,7 +29,7 @@ class BaseController {
             const data = await this.service.findById(req.params.id);
             if (!data) {
                 logger.warn(`${this.resourceName} with ID ${req.params.id} not found`);
-                responseUtils.notFound(res, `${this.resourceName} not found`);
+                return responseUtils.notFound(res, `${this.resourceName} not found`);
             }
             responseUtils.success(res, data);
         } catch (error) {

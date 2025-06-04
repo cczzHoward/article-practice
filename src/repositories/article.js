@@ -8,11 +8,15 @@ class ArticleRepository extends BaseRepository {
 
     // ArticleRepository 自己特有的方法可以從這裡往下寫
     async findAll(filter = {}) {
-        return this.model.find(filter).populate('author', 'username -_id');
+        return this.model.find(filter)
+        .populate('author', 'username -_id')
+        .populate('category', 'name -_id');
     }
 
     async findById(id) {
-        return this.model.findById(id).populate('author', 'username -_id');
+        return this.model.findById(id)
+        .populate('author', 'username -_id')
+        .populate('category', 'name -_id');
     }
 
     async searchAndPaginate({ keyword, page, limit }) {
@@ -25,12 +29,13 @@ class ArticleRepository extends BaseRepository {
         }
         const skip = (page - 1) * limit;
         const [data, total] = await Promise.all([
-            this.model.find(filter)
+            ArticleModel.find(filter)
                 .populate('author', 'username -_id')
+                .populate('category', 'name -_id')
                 .skip(skip)
                 .limit(limit)
                 .sort({ created_at: -1 }),
-            this.model.countDocuments(filter)
+            ArticleModel.countDocuments(filter)
         ]);
         return {
             data,
