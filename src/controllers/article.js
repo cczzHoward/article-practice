@@ -80,6 +80,31 @@ class ArticleController extends BaseController {
             responseUtils.error(res, `Error updating ${this.resourceName}`);
         }
     };
+
+    async delete(req, res) {
+        try {
+            // 檢查文章是否存在
+            const article = await this.service.findById(req.params.id);
+            if (!article) {
+                return responseUtils.notFound(res, `${this.resourceName} not found`);
+            }
+
+            // 刪除的這篇文章必需為當前使用者的文章
+            const tokenUsername = req.user.username.toString();
+            const articleAuthorUsername = article.author.username.toString();
+            console.log('tokenUsername:', tokenUsername);
+            console.log('articleAuthorUsername:', articleAuthorUsername);
+            if (tokenUsername !== articleAuthorUsername) {
+                return responseUtils.forbidden(res, 'You do not have permission to delete this article');
+            }
+
+            const data = await this.service.delete(req.params.id);
+            responseUtils.noContent(res, `${this.resourceName} deleted successfully`);
+        } catch (error) {
+            logger.error(`Error deleting ${this.resourceName}:`, error);
+            responseUtils.error(res, `Error deleting ${this.resourceName}`);
+        }
+    };
 }
 
 module.exports = new ArticleController(ArticleService, 'article');
