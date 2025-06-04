@@ -7,6 +7,7 @@ const ArticleValidator = require('../validators/article');
 
 // 取得文章列表
 router.get('/list',
+    validate(ArticleValidator.getAllArticlesSchema, 'query'),
     ArticleController.getAll,
 );
 

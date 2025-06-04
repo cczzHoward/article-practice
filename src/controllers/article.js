@@ -20,7 +20,6 @@ class ArticleController extends BaseController {
                 if (foundCategory) {
                     categoryId = foundCategory._id;
                 }
-                console.log('Category ID:', categoryId);
             }
 
             const result = await ArticleService.searchAndPaginate({
