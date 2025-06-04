@@ -199,16 +199,20 @@ src/
 - 日誌格式與等級可於 `src/utils/logger.js` 設定。
 
 ## 文章搜尋與分頁
-- `/api/v1/articles/list` 路由支援 `keyword`（標題/內容模糊搜尋）、`page`（分頁，預設 1）、`limit`（每頁筆數，預設 10）等 query string。
-- 回傳格式包含：`data`（文章陣列）、`total`（總筆數）、`page`、`limit`、`totalPages`。
+- `/api/v1/articles/list` 路由支援以下 query string：
+  - `keyword`：標題或內容模糊搜尋
+  - `category`：分類名稱（如 "前端"、"後端"），自動轉換為對應的 category ObjectId 查詢
+  - `page`：分頁，預設 1
+  - `limit`：每頁筆數，預設 10
+- 回傳格式包含：`data`（文章陣列）、`total`（總筆數）、`page`、`limit`、`totalPages`
 - 範例：
     ```
-    GET /api/v1/articles/list?keyword=node&page=2&limit=5
+    GET /api/v1/articles/list?keyword=node&page=2&limit=5&category=前端
     ```
+- 文章列表支援依分類（category）查詢，分類名稱會自動轉換為對應的分類 id 查詢
 
 ## 未來規劃
 - 增加評論功能
 - 完善使用者權限管理（如：登入者只能更新/刪除自己的文章）
-- 文章列表支援依分類（category）查詢
 
 歡迎提供建議與回饋！
