@@ -1,6 +1,6 @@
 # 部落格 API 練習專案
 
-這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的註冊、登入、登出、變更密碼與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性，並統一 API 回應格式。  
+這是一個以部落格為主題的練習專案，採用分層架構（Controller → Service → Repository → Model），並實作 JWT 驗證的註冊、登入、登出、變更密碼與基礎 CRUD。專案已導入 baseController、baseService、baseRepository、baseSchema 以提升可維護性與擴展性，並統一 API 回應格式。
 
 ## 專案目標
 - 學習並實踐分層架構設計
@@ -25,6 +25,7 @@
 - [x] 變更密碼（需登入）
 - [x] 發佈、編輯、刪除文章（需登入）
 - [x] 瀏覽文章列表、查看文章詳情（公開）
+- [x] 文章分類功能（Category Model，文章關聯分類）
 - [x] 日誌紀錄（winston）
 - [x] 統一 API 回應格式
 - [x] Joi Validator（統一請求參數驗證）
@@ -53,11 +54,13 @@ src/
   controllers/
     article.js
     auth.js
+    category.js
   database/
     dbConnection.js
     seeders/
       user.js
       article.js
+      category.js
       index.js
   middlewares/
     auth.js
@@ -66,15 +69,19 @@ src/
   models/
     article.js
     user.js
+    category.js
   repositories/
     article.js
     user.js
+    category.js
   routes/
     article.js
     auth.js
+    category.js
   services/
     article.js
     auth.js
+    category.js
   utils/
     logger.js
     response.js
@@ -133,9 +140,15 @@ src/
 - `created_at` (Date)
 - `updated_at` (Date)
 
+### Category
+- `name` (String, 必填, 唯一)
+- `created_at` (Date)
+- `updated_at` (Date)
+
 ### Article
 - `title` (String, 必填)
 - `author` (ObjectId, 必填, 參照 User)
+- `category` (ObjectId, 必填, 參照 Category)
 - `content` (String, 必填)
 - `created_at` (Date)
 - `updated_at` (Date)
@@ -178,7 +191,7 @@ src/
 
 ## Seeder 使用說明
 - Seeder 腳本集中於 `src/database/seeders/`。
-- 執行 `npm run seed` 會自動初始化預設用戶與文章資料。
+- 執行 `npm run seed` 會自動初始化預設用戶、分類與文章資料。
 - 可依需求擴充更多 seeder 檔案。
 
 ## 日誌管理
@@ -195,7 +208,7 @@ src/
 
 ## 未來規劃
 - 增加評論功能
-- 增加文章分類功能
-- 完善使用者權限管理
+- 完善使用者權限管理（如：登入者只能更新/刪除自己的文章）
+- 文章列表支援依分類（category）查詢
 
 歡迎提供建議與回饋！
