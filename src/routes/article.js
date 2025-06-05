@@ -4,7 +4,7 @@ const ArticleController = require('../controllers/article');
 const passportMiddleware = require('../middlewares/passport');
 const validate = require('../validators/validate');
 const ArticleValidator = require('../validators/article');
-const { isSelfOrAdmin } = require('../middlewares/auth');
+const { isArticleSelfOrAdmin } = require('../middlewares/auth');
 
 // 取得文章列表
 router.get('/list',
@@ -28,14 +28,14 @@ router.post('/',
 
 // 更新文章
 router.patch('/:id',
-    isSelfOrAdmin,
+    isArticleSelfOrAdmin,
     validate(ArticleValidator.updateArticleSchema),
     ArticleController.update,
 );
 
 // 刪除文章(hard delete)
 router.delete('/:id',
-    isSelfOrAdmin,
+    isArticleSelfOrAdmin,
     ArticleController.delete,
 );
 
