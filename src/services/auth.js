@@ -39,6 +39,7 @@ class AuthService extends BaseService {
         const tokenObject = {
             id: user._id,
             username: user.username,
+            role: user.role,
         };
         const jwtToken = jwt.sign(tokenObject, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRATION || '1h',

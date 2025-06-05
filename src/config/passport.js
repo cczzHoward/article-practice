@@ -15,6 +15,7 @@ module.exports = (passport) => {
                     const returnedUser = {
                         id: user._id,
                         username: user.username,
+                        role: user.role,
                     }
                     return done(null, returnedUser);
                 } else {
