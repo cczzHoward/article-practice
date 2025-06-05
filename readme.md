@@ -210,12 +210,29 @@ src/
     GET /api/v1/articles/list?keyword=node&page=2&limit=5&category=前端
     ```
 
+## 權限與身分管理
+- 🛡️ **增加身分功能（如：管理員、一般使用者）**  
+  - 使用者模型（User Model）已新增 `role` 欄位，預設為 `"user"`，管理員為 `"admin"`。
+  - JWT 登入時會帶入 `role` 權限資訊，並於 Passport 驗證後掛載於 `req.user`。
+  - 路由層已加入權限 middleware：
+    - **管理員（admin）** 可管理所有文章與用戶。
+    - **一般使用者（user）** 僅能管理自己的內容（如：只能編輯/刪除自己發表的文章）。
+  - 文章相關 API（編輯、刪除）已於 route 層加入 `isSelfOrAdmin` 權限控管。
+
+### 權限範例
+- `POST   /api/v1/articles/`              新增文章（需登入，所有用戶皆可）
+- `PATCH  /api/v1/articles/:id`           編輯文章（僅作者本人或管理員可編輯）
+- `DELETE /api/v1/articles/:id`           刪除文章（僅作者本人或管理員可刪除）
+
+> 權限相關邏輯請參考 [`src/middlewares/auth.js`](src/middlewares/auth.js) 及 [`src/routes/article.js`](src/routes/article.js)
+
+歡迎提供建議與回饋！
+
 ## 未來規劃
 - 💬 **增加評論功能**  
   讓使用者可以針對文章留言、互動。
 
-- 🛡️ **增加身分功能（如：管理員、一般使用者）**  
-  管理員可管理所有文章與用戶，一般使用者僅能管理自己的內容。
+- 🛡️ 用戶管理相關 API (如:刪除用戶) 可透過 `isAdmin` middleware 限定僅管理員可操作。
 
 
 歡迎提供建議與回饋！
