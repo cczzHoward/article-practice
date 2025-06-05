@@ -59,10 +59,14 @@ class AuthController {
     async changePassword(req, res) {
         try {
             const { oldPassword, newPassword } = req.body;
+            const userId = req.user.id;
 
-            // 使用 req.user._id 獲取當前用戶並更改密碼
-            const userId = req.user._id; // 假設使用者 ID 存在於 req.user 中
-            await AuthService.changePassword(userId, newPassword);
+            // 先在 controller 層檢查新舊密碼是否相同
+            if (oldPassword === newPassword) {
+                return responseUtils.badRequest(res, 'New password cannot be the same as old password');
+            }
+
+            await AuthService.changePassword(userId, oldPassword, newPassword);
             responseUtils.success(
                 res, 
                 null,
@@ -73,7 +77,11 @@ class AuthController {
 
             if (error.message === 'User not found') {
                 return responseUtils.notFound(res, 'User not found');
-            };
+            } else if (error.message === 'New password cannot be the same as old password') {
+                return responseUtils.badRequest(res, 'New password cannot be the same as old password');
+            } else if (error.message === 'Invalid old password') {
+                return responseUtils.unauthorized(res, 'Invalid old password');
+            }
 
             responseUtils.error(res, 'Internal server error');
         }

@@ -48,13 +48,25 @@ class AuthService extends BaseService {
         return jwtToken;
     }
 
-    async changePassword(userId, newPassword) {
+    async changePassword(userId, oldPassword, newPassword) {
         // 先查出 user 實例
         const user = await UserRepository.findById(userId);
         if (!user) {
             throw new Error('User not found');
         }
         
+        // 驗證舊密碼
+        const isMatch = await user.comparePassword(oldPassword);
+        if (!isMatch) {
+            throw new Error('Invalid old password');
+        }
+
+        // 檢查新密碼是否與舊密碼相同
+        if (oldPassword === newPassword) {
+            throw new Error('New password cannot be the same as old password');
+        }
+
+        // 更新密碼
         user.password = newPassword;
         await user.save(); // 這裡會自動 hash 密碼
         return user;
