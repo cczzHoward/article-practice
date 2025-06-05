@@ -234,5 +234,9 @@ src/
 
 - 🛡️ 用戶管理相關 API (如:刪除用戶) 可透過 `isAdmin` middleware 限定僅管理員可操作。
 
+- 🧪 **增加 unit test**  
+  為主要 Service、Controller、Middleware 撰寫單元測試，提升程式碼品質與穩定性。
+
+
 
 歡迎提供建議與回饋！
