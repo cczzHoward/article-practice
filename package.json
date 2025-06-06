@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "app": "node src/app.js",
     "watch": "nodemon src/app.js",
-    "seed": "node src/database/seeders/index.js"
+    "seed": "node src/database/seeders/index.js",
+    "jest": "jest --watchAll"
   },
   "author": "",
   "license": "ISC",
@@ -21,5 +22,9 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.1"
   }
 }
