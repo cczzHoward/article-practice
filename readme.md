@@ -237,7 +237,8 @@ src/
 - 🧪 **增加 unit test**  
   為主要 Service、Controller、Middleware 撰寫單元測試，提升程式碼品質與穩定性。
 
-- 🗂️ **User Schema 儲存發表文章紀錄**
-  - User 資料結構將新增 `postedArticles` 欄位，儲存該使用者發表過的所有文章 ID，方便查詢與統計。
+- ⚡ **支援 MongoDB Transaction（需 Replica Set）**  
+  將來可用 replica set 啟用 transaction，處理需 rollback 的情境（可以查詢TODO看實際狀況），以確保資料一致性。
+
 
 歡迎提供建議與回饋！
