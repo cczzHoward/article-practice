@@ -36,31 +36,55 @@ const articlesData = [
 ];
 
 async function seedArticles() {
-  await ArticleModel.deleteMany({});
+    await ArticleModel.deleteMany({});
 
-  // 取得所有 user 的 ObjectId 對照表
-  const users = await UserModel.find({}, 'username _id');
-  const userMap = {};
-  users.forEach(user => {
-      userMap[user.username] = user._id;
-  });
+    // 取得所有 user 的 ObjectId 對照表
+    const users = await UserModel.find({}, 'username _id');
+    const userMap = {};
+    users.forEach(user => {
+        userMap[user.username] = user._id;
+    });
 
-  // 取得所有 category 的 ObjectId 對照表
-  const categories = await CategoryModel.find({}, 'name _id');
-  const categoryMap = {};
-  categories.forEach(cat => {
-      categoryMap[cat.name] = cat._id;
-  });
+    // 取得所有 category 的 ObjectId 對照表
+    const categories = await CategoryModel.find({}, 'name _id');
+    const categoryMap = {};
+    categories.forEach(cat => {
+        categoryMap[cat.name] = cat._id;
+    });
 
-  // 將 author 由 username 轉成 ObjectId，category 由名稱轉成 ObjectId
-  const articles = articlesData.map(article => ({
-      ...article,
-      author: userMap[article.author],
-      category: categoryMap[article.category],
-  }));
+    // 將 author 由 username 轉成 ObjectId，category 由名稱轉成 ObjectId
+    const articles = articlesData.map(article => ({
+        ...article,
+        author: userMap[article.author],
+        category: categoryMap[article.category],
+    }));
 
-  await ArticleModel.insertMany(articles);
-  console.log('Article seeding done!');
+    // 插入文章
+    const insertedArticles = await ArticleModel.insertMany(articles);
+
+    // 初始化所有作者的 postedArticles 欄位
+    await UserModel.updateMany({},
+        { $set: { postedArticles: [] } }
+    );
+
+    // 建立 userId -> [articleId, ...] 的對照表
+    const userArticlesMap = {};
+    insertedArticles.forEach(article => {
+        const authorId = article.author.toString();
+        if (!userArticlesMap[authorId]) {
+            userArticlesMap[authorId] = [];
+        }
+        userArticlesMap[authorId].push(article._id);
+    });
+
+    // 批次更新每個 user 的 postedArticles
+    const updatePromises = Object.entries(userArticlesMap).map(([userId, articleIds]) =>
+        UserModel.findByIdAndUpdate(userId, { $addToSet: { postedArticles: { $each: articleIds } } })
+    );
+    await Promise.all(updatePromises);
+    
+
+    console.log('Article seeding done!');
 }
 
 module.exports = seedArticles;
