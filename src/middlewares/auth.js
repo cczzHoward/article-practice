@@ -13,7 +13,6 @@ async function isArticleSelfOrAdmin(req, res, next) {
     if (!article) {
         return responseUtils.notFound(res, 'Article not found');
     }
-    console.log(article.author.username.toString(), req.user.username);
 
     if (req.user.role === 'admin' || article.author.username.toString() === req.user.username) {
         return next();

@@ -15,7 +15,7 @@ class ArticleRepository extends BaseRepository {
 
     async findById(id) {
         return this.model.findById(id)
-        .populate('author', 'username -_id')
+        .populate('author', 'username _id')
         .populate('category', 'name -_id');
     }
 
@@ -51,6 +51,10 @@ class ArticleRepository extends BaseRepository {
 
     async getCategoryIdByName(categoryName) {
         return this.model.find({ category: categoryName }).select('category');
+    }
+
+    async getAuthorIdByArticle(articleId) {
+        return this.model.findById(articleId).select('author -_id');
     }
 
 }

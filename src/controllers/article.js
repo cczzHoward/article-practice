@@ -44,6 +44,7 @@ class ArticleController extends BaseController {
                 return responseUtils.badRequest(res, 'Category not found');
             }
 
+            // TODO: 將來可用 replica set 啟用 transaction 處理需 rollback 的情境 (create 成功但 addPostedArticleToAuthor 失敗)
             const articleData = {
                 title,
                 content,
@@ -51,6 +52,10 @@ class ArticleController extends BaseController {
                 author: req.user.id
             }
             const data = await this.service.create(articleData);
+            
+            // 將新創建的文章 ID 添加到作者的 postedArticles 中
+            await this.service.addPostedArticleToAuthor(req.user.id, data._id);
+
             responseUtils.created(res, data, `${this.resourceName} created successfully`);
         } catch (error) {
             logger.error(`Error creating ${this.resourceName}:`, error);
@@ -82,7 +87,13 @@ class ArticleController extends BaseController {
                 return responseUtils.notFound(res, `${this.resourceName} not found`);
             }
 
+            const authorId = article.author._id
+
+            // TODO: 將來可用 replica set 啟用 transaction 處理需 rollback 的情境 (delete 成功但 removePostedArticleFromAuthor 失敗)
             const data = await this.service.delete(req.params.id);
+
+            await this.service.removePostedArticleFromAuthor(authorId, req.params.id);
+
             responseUtils.noContent(res, `${this.resourceName} deleted successfully`);
         } catch (error) {
             logger.error(`Error deleting ${this.resourceName}:`, error);

@@ -10,6 +10,22 @@ class UserRepository extends BaseRepository {
     async findByUsername(username) {
         return this.model.findOne({ username });
     }
+
+    async addPostedArticleToAuthor(authorId, articleId) {
+        return this.model.findByIdAndUpdate(
+            authorId,
+            { $addToSet: { postedArticles: articleId } },
+            { new: true }
+        );
+    }
+
+    async removePostedArticleFromAuthor(authorId, articleId) {
+        return this.model.findByIdAndUpdate(
+            authorId,
+            { $pull: { postedArticles: articleId } },
+            { new: true }
+        );
+    }
 }
 
 module.exports = new UserRepository(UserModel);
