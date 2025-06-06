@@ -9,7 +9,6 @@ function isAdmin(req, res, next) {
 // 僅限作者本人或 admin
 async function isArticleSelfOrAdmin(req, res, next) {
     const article = await ArticleService.findById(req.params.id);
-    console.log(article);
 
     if (!article) {
         return responseUtils.notFound(res, 'Article not found');
@@ -23,7 +22,19 @@ async function isArticleSelfOrAdmin(req, res, next) {
     return responseUtils.forbidden(res, 'You do not have permission to access this resource');
 }
 
+function isUserSelfOrAdminButNotSelf(req, res, next) {
+    const isAdmin = req.user.role === 'admin';
+    const isSelf = req.user.id.toString() === req.params.id.toString();
+
+    if (isAdmin && !isSelf) return next(); // admin 只能刪除別人
+    if (!isAdmin && isSelf) return next(); // user 只能刪除自己
+
+    // 其他情況都禁止
+    return responseUtils.forbidden(res, 'You do not have permission to delete this user');
+}
+
 module.exports = {
     isArticleSelfOrAdmin,
     isAdmin,
+    isUserSelfOrAdminButNotSelf,
 };
