@@ -41,7 +41,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 userSchema.pre('save', async function (next) {
-    // TODO: 將雜湊密碼抽成一個 funciton (方便做 unit test)
+    // TODO: 將雜湊密碼抽成一個 function (方便做 unit test)
     if (!this.isModified('password')) return next();
     try {
         const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) || 10);
