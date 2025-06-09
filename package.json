@@ -8,7 +8,8 @@
     "app": "node src/server.js",
     "watch": "nodemon src/server.js",
     "seed": "node src/database/seeders/index.js",
-    "jest": "jest --watchAll"
+    "jest": "jest --watchAll",
+    "format": "prettier --write"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "prettier": "^3.5.3",
     "supertest": "^7.1.1"
   }
 }
