@@ -42,7 +42,7 @@ const createArticleSchema = Joi.object({
 const updateArticleSchema = Joi.object({
     title: Joi.string().min(1).max(128),
     content: Joi.string().min(1).max(25565),
-}).required(); // 強制 body 不能為空
+}).or('title', 'content');
 
 module.exports = {
     getAllArticlesSchema,
