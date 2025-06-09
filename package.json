@@ -4,11 +4,11 @@
     "description": "這是一個以部落格為主題的練習專案，主要目的是熟悉使用 `Controller -> Service -> Repository -> Model` 架構來開發 API。",
     "main": "src/app.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "app": "node src/server.js",
         "watch": "nodemon src/server.js",
         "seed": "node src/database/seeders/index.js",
-        "jest": "jest --watchAll",
+        "test": "jest --watchAll",
+        "test:coverage": "jest --coverage",
         "format": "prettier --write ."
     },
     "author": "",

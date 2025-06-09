@@ -6,3 +6,6 @@ node_modules/
 
 # log files
 src/utils/logs/*
+
+# coverage reports
+coverage/
