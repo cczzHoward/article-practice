@@ -54,7 +54,7 @@ class AuthService extends BaseService {
         if (!user) {
             throw new Error('User not found');
         }
-        
+
         // 驗證舊密碼
         const isMatch = await user.comparePassword(oldPassword);
         if (!isMatch) {

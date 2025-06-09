@@ -26,7 +26,7 @@ class ArticleController extends BaseController {
                 keyword,
                 category: categoryId,
                 page: parseInt(page, 10) || 1,
-                limit: parseInt(limit, 10) || 10
+                limit: parseInt(limit, 10) || 10,
             });
             responseUtils.success(res, result, 'Get articles success');
         } catch (error) {
@@ -38,7 +38,7 @@ class ArticleController extends BaseController {
     async create(req, res) {
         try {
             const { title, content, category } = req.body;
-            
+
             const categoryId = await this.service.getCategoryIdByName(category);
             if (!categoryId) {
                 return responseUtils.badRequest(res, 'Category not found');
@@ -49,10 +49,10 @@ class ArticleController extends BaseController {
                 title,
                 content,
                 category: categoryId._id,
-                author: req.user.id
-            }
+                author: req.user.id,
+            };
             const data = await this.service.create(articleData);
-            
+
             // 將新創建的文章 ID 添加到作者的 postedArticles 中
             await this.service.addPostedArticleToAuthor(req.user.id, data._id);
 
@@ -61,7 +61,7 @@ class ArticleController extends BaseController {
             logger.error(`Error creating ${this.resourceName}:`, error);
             responseUtils.error(res, `Error creating ${this.resourceName}`);
         }
-    };
+    }
 
     async update(req, res) {
         try {
@@ -77,7 +77,7 @@ class ArticleController extends BaseController {
             logger.error(`Error updating ${this.resourceName}:`, error);
             responseUtils.error(res, `Error updating ${this.resourceName}`);
         }
-    };
+    }
 
     async delete(req, res) {
         try {
@@ -87,7 +87,7 @@ class ArticleController extends BaseController {
                 return responseUtils.notFound(res, `${this.resourceName} not found`);
             }
 
-            const authorId = article.author._id
+            const authorId = article.author._id;
 
             // TODO: 將來可用 replica set 啟用 transaction 處理需 rollback 的情境 (delete 成功但 removePostedArticleFromAuthor 失敗)
             const data = await this.service.delete(req.params.id);
@@ -99,7 +99,7 @@ class ArticleController extends BaseController {
             logger.error(`Error deleting ${this.resourceName}:`, error);
             responseUtils.error(res, `Error deleting ${this.resourceName}`);
         }
-    };
+    }
 }
 
 module.exports = new ArticleController(ArticleService, 'article');

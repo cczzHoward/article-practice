@@ -34,7 +34,7 @@ function error(res, message = 'error', code = 500, data = null) {
     return res.status(code).json({ success: false, message, data });
 }
 
-module.exports = { 
+module.exports = {
     success,
     created,
     noContent,
@@ -43,5 +43,5 @@ module.exports = {
     forbidden,
     notFound,
     conflict,
-    error
+    error,
 };

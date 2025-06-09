@@ -8,15 +8,17 @@ class ArticleRepository extends BaseRepository {
 
     // ArticleRepository 自己特有的方法可以從這裡往下寫
     async findAll(filter = {}) {
-        return this.model.find(filter)
-        .populate('author', 'username -_id')
-        .populate('category', 'name -_id');
+        return this.model
+            .find(filter)
+            .populate('author', 'username -_id')
+            .populate('category', 'name -_id');
     }
 
     async findById(id) {
-        return this.model.findById(id)
-        .populate('author', 'username _id')
-        .populate('category', 'name -_id');
+        return this.model
+            .findById(id)
+            .populate('author', 'username _id')
+            .populate('category', 'name -_id');
     }
 
     async searchAndPaginate({ keyword, category, page, limit }) {
@@ -24,7 +26,7 @@ class ArticleRepository extends BaseRepository {
         if (keyword) {
             filter.$or = [
                 { title: { $regex: keyword, $options: 'i' } },
-                { content: { $regex: keyword, $options: 'i' } }
+                { content: { $regex: keyword, $options: 'i' } },
             ];
         }
         if (category) {
@@ -32,20 +34,21 @@ class ArticleRepository extends BaseRepository {
         }
         const skip = (page - 1) * limit;
         const [data, total] = await Promise.all([
-            this.model.find(filter)
+            this.model
+                .find(filter)
                 .populate('author', 'username -_id')
                 .populate('category', 'name -_id')
                 .skip(skip)
                 .limit(limit)
                 .sort({ created_at: -1 }),
-            this.model.countDocuments(filter)
+            this.model.countDocuments(filter),
         ]);
         return {
             data,
             total,
             page,
             limit,
-            totalPages: Math.ceil(total / limit)
+            totalPages: Math.ceil(total / limit),
         };
     }
 
@@ -56,7 +59,6 @@ class ArticleRepository extends BaseRepository {
     async getAuthorIdByArticle(articleId) {
         return this.model.findById(articleId).select('author -_id');
     }
-
 }
 
 module.exports = new ArticleRepository(ArticleModel);

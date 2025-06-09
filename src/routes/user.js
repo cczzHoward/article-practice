@@ -7,9 +7,6 @@ const { isUserSelfOrAdminButNotSelf } = require('../middlewares/auth');
 router.use(passportMiddleware.authenticate('jwt', { session: false }));
 
 // 刪除用戶
-router.delete('/:id',
-    isUserSelfOrAdminButNotSelf,
-    UserController.delete,
-)
+router.delete('/:id', isUserSelfOrAdminButNotSelf, UserController.delete);
 
 module.exports = router;

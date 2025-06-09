@@ -22,7 +22,7 @@ class BaseController {
             logger.error(`Error fetching ${this.resourceName} list:`, error);
             responseUtils.error(res, `Error fetching ${this.resourceName} list`);
         }
-    };
+    }
 
     async getById(req, res) {
         try {
@@ -36,7 +36,7 @@ class BaseController {
             logger.error(`Error fetching ${this.resourceName} by ID:`, error);
             responseUtils.error(res, `Error fetching ${this.resourceName} by ID`);
         }
-    };
+    }
 
     async create(req, res) {
         try {
@@ -46,7 +46,7 @@ class BaseController {
             logger.error(`Error creating ${this.resourceName}:`, error);
             responseUtils.error(res, `Error creating ${this.resourceName}`);
         }
-    };
+    }
 
     async update(req, res) {
         try {
@@ -56,7 +56,7 @@ class BaseController {
             logger.error(`Error updating ${this.resourceName}:`, error);
             responseUtils.error(res, `Error updating ${this.resourceName}`);
         }
-    };
+    }
 
     async delete(req, res) {
         try {
@@ -66,7 +66,7 @@ class BaseController {
             logger.error(`Error deleting ${this.resourceName}:`, error);
             responseUtils.error(res, `Error deleting ${this.resourceName}`);
         }
-    };
+    }
 }
 
 module.exports = BaseController;

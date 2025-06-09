@@ -21,11 +21,13 @@ const userSchema = new Schema({
         enum: ['admin', 'user'],
         default: 'user',
     },
-    postedArticles: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Article',
-        default: []
-    }]
+    postedArticles: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Article',
+            default: [],
+        },
+    ],
 });
 
 userSchema.plugin(BaseSchema);

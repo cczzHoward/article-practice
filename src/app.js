@@ -8,7 +8,7 @@ const responseUtils = require('./utils/response');
 const ArticleRouter = require('./routes/article');
 const AuthRouter = require('./routes/auth');
 const CategoryRouter = require('./routes/category');
-const UserRouter = require('./routes/user')
+const UserRouter = require('./routes/user');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -16,11 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(loggerMiddleware.logRequest);
 
 app.get('/', (req, res) => {
-  responseUtils.success(res, null, 'Root endpoint is working!');
+    responseUtils.success(res, null, 'Root endpoint is working!');
 });
 
 app.get('/api', (req, res) => {
-  responseUtils.success(res, null, 'API is working!');
+    responseUtils.success(res, null, 'API is working!');
 });
 
 app.use('/api/v1/users', AuthRouter);

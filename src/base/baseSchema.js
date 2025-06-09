@@ -2,12 +2,12 @@ function baseSchemaPlugin(schema) {
     schema.add({
         created_at: {
             type: Date,
-            default: Date.now
+            default: Date.now,
         },
         updated_at: {
             type: Date,
-            default: Date.now
-        }
+            default: Date.now,
+        },
     });
 
     schema.options.versionKey = false; // Disable version key (__v)
@@ -17,7 +17,7 @@ function baseSchemaPlugin(schema) {
             ret.id = doc._id;
             delete ret._id;
             return ret;
-        }
+        },
     };
 
     schema.pre('save', function (next) {

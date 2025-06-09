@@ -10,7 +10,7 @@ const categoriesData = [
     { name: 'API 設計' },
     { name: '部署與維運' },
     { name: '使用者體驗' },
-    { name: '其他' }
+    { name: '其他' },
 ];
 
 async function seedCategories() {

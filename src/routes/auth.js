@@ -6,24 +6,19 @@ const validate = require('../validators/validate');
 const AuthValidator = require('../validators/auth');
 
 // 用戶註冊
-router.post('/register',
-    validate(AuthValidator.registerSchema),
-    AuthController.register,
-);
+router.post('/register', validate(AuthValidator.registerSchema), AuthController.register);
 
 // 用戶登入
-router.post('/login', 
-    validate(AuthValidator.loginSchema),
-    AuthController.login,
-);
+router.post('/login', validate(AuthValidator.loginSchema), AuthController.login);
 
 // 以下路由需要身份驗證
 router.use(passportMiddleware.authenticate('jwt', { session: false }));
 
 // 變更帳密
-router.post('/change-password',
+router.post(
+    '/change-password',
     validate(AuthValidator.changePasswordSchema),
-    AuthController.changePassword,  
+    AuthController.changePassword
 );
 
 // 用戶登出

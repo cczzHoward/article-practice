@@ -10,15 +10,12 @@ const myFormat = printf(({ level, message, timestamp }) => {
 
 const logger = winston.createLogger({
     level: 'info',
-    format: combine(
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        myFormat
-    ),
+    format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), myFormat),
     transports: [
         new winston.transports.Console(),
         new winston.transports.File({ filename: path.join(logDir, 'error.log'), level: 'error' }),
-        new winston.transports.File({ filename: path.join(logDir, 'combined.log') })
-    ]
+        new winston.transports.File({ filename: path.join(logDir, 'combined.log') }),
+    ],
 });
 
 module.exports = logger;
