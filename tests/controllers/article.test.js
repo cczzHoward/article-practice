@@ -3,8 +3,6 @@ const ArticleService = require('../../src/services/article');
 
 jest.mock('../../src/services/article');
 
-jest.spyOn(require('../../src/utils/logger'), 'error').mockImplementation(() => {});
-
 describe('ArticleController', () => {
     describe('getAll', () => {
         it('should return 200 and articles list', async () => {
@@ -35,6 +33,64 @@ describe('ArticleController', () => {
 
             // Act
             await ArticleController.getAll(mockReq, mockRes);
+
+            // Assert
+            expect(mockRes.status).toHaveBeenCalledWith(500);
+            expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
+        });
+    });
+
+    describe('getById', () => {
+        it('should return 200 and article by ID', async () => {
+            // Arrange
+            const mockReq = { params: { id: '123' } };
+            const mockRes = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+            ArticleService.findById.mockResolvedValue({ id: '123', title: 'Test Article' });
+
+            // Act
+            await ArticleController.getById(mockReq, mockRes);
+
+            // Assert
+            expect(mockRes.status).toHaveBeenCalledWith(200);
+            expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
+        });
+
+        it('should return 404 if article not found', async () => {
+            // Arrange
+            const mockReq = { params: { id: 'nonexistentId' } };
+            const mockRes = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+            ArticleService.findById.mockResolvedValue(null);
+
+            // Act
+            await ArticleController.getById(mockReq, mockRes);
+
+            // Assert
+            expect(mockRes.status).toHaveBeenCalledWith(404);
+            expect(mockRes.json).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    success: false,
+                    message: `${ArticleController.resourceName} not found`,
+                })
+            );
+        });
+
+        it('should return 500 if service throws error', async () => {
+            // Arrange
+            const mockReq = { params: { id: '123' } };
+            const mockRes = {
+                status: jest.fn().mockReturnThis(),
+                json: jest.fn(),
+            };
+            ArticleService.findById.mockRejectedValue(new Error('DB error'));
+
+            // Act
+            await ArticleController.getById(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(500);
