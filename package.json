@@ -9,7 +9,7 @@
     "watch": "nodemon src/server.js",
     "seed": "node src/database/seeders/index.js",
     "jest": "jest --watchAll",
-    "format": "prettier --write"
+    "format": "prettier --write ."
   },
   "author": "",
   "license": "ISC",
