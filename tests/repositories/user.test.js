@@ -72,7 +72,7 @@ describe('UserRepository', () => {
     });
 
     describe('delete', () => {
-        it('should delete a uset', async () => {
+        it('should delete a user', async () => {
             // Arrange
             const mockUser = { _id: '123', username: 'deleteduser' };
             UserModel.findByIdAndDelete.mockResolvedValue(mockUser);
