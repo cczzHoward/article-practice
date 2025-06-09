@@ -28,6 +28,4 @@ app.use('/api/v1/users', UserRouter);
 app.use('/api/v1/articles', ArticleRouter);
 app.use('/api/v1/categories', CategoryRouter);
 
-app.listen(8080, () => {
-  console.log('Server is running on http://localhost:8080');
-});
+module.exports = app;
