@@ -1,3 +1,4 @@
+jest.spyOn(require('../src/utils/logger'), 'info').mockImplementation(() => {});
 jest.spyOn(require('../src/utils/logger'), 'warn').mockImplementation(() => {});
 jest.spyOn(require('../src/utils/logger'), 'error').mockImplementation(() => {});
 
