@@ -3,8 +3,6 @@ const AuthService = require('../../src/services/auth');
 
 jest.mock('../../src/services/auth');
 
-jest.spyOn(require('../../src/utils/logger'), 'error').mockImplementation(() => {});
-
 describe('AuthController', () => {
     describe('register', () => {
         it('should return 201 and user data on successful registration', async () => {
