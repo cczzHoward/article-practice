@@ -9,3 +9,6 @@ src/utils/logs/*
 
 # coverage reports
 coverage/
+
+# database's data file
+data/
