@@ -105,7 +105,7 @@ src/
 
 1. 複製專案到本地：
     ```bash
-    git clone <your-repo-url>
+    git clone git@github.com:cczzHoward/article-practice.git
     cd article-practice
     ```
 2. 安裝依賴：
