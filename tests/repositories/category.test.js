@@ -81,7 +81,7 @@ describe('CategoryRepository', () => {
             const result = await CategoryRepository.delete('123');
 
             // Assert
-            expect(CategoryModel.findByIdAndDelete).toHaveBeenCalledWith('123');
+            expect(CategoryModel.findByIdAndDelete).toHaveBeenCalledWith('123', {});
             expect(result).toEqual(mockCategory);
         });
     });

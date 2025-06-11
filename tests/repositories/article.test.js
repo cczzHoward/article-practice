@@ -51,7 +51,7 @@ describe('ArticleRepository', () => {
             const result = await ArticleRepository.delete('123');
 
             // Assert
-            expect(ArticleModel.findByIdAndDelete).toHaveBeenCalledWith('123');
+            expect(ArticleModel.findByIdAndDelete).toHaveBeenCalledWith('123', {});
             expect(result).toEqual(mockArticle);
         });
     });

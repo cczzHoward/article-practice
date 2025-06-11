@@ -81,7 +81,7 @@ describe('UserRepository', () => {
             const result = await UserRepository.delete('123');
 
             // Assert
-            expect(UserModel.findByIdAndDelete).toHaveBeenCalledWith('123');
+            expect(UserModel.findByIdAndDelete).toHaveBeenCalledWith('123', {});
             expect(result).toEqual(mockUser);
         });
     });
