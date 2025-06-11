@@ -20,8 +20,8 @@ class BaseRepository {
         return this.model.findByIdAndUpdate(id, data, { new: true });
     }
 
-    async delete(id) {
-        return this.model.findByIdAndDelete(id);
+    async delete(id, options = {}) {
+        return this.model.findByIdAndDelete(id, options);
     }
 }
 

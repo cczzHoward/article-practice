@@ -2,6 +2,7 @@ const ArticleRepository = require('../repositories/article');
 const CategoryRepository = require('../repositories/category');
 const UserRepository = require('../repositories/user');
 const BaseService = require('../base/baseService');
+const conn = require('../database/dbConnection');
 
 class ArticleService extends BaseService {
     constructor(repository) {
@@ -27,6 +28,28 @@ class ArticleService extends BaseService {
 
     async getAuthorIdByArticle(articleId) {
         return this.repository.getAuthorIdByArticle(articleId);
+    }
+
+    async deleteWithTx(articleId, authorId) {
+        let session;
+        try {
+            session = await conn.startSession();
+            session.startTransaction();
+            // 刪除文章
+            await this.repository.delete(articleId, { session });
+
+            // 從作者的 postedArticles 中移除文章 ID
+            await UserRepository.removePostedArticleFromAuthor(authorId, articleId, { session });
+
+            await session.commitTransaction();
+            return true;
+        } catch (err) {
+            await session.abortTransaction();
+            console.log('Transaction aborted due to error:', err);
+            throw new Error(`Transaction failed: ${err.message}`);
+        } finally {
+            session.endSession();
+        }
     }
 }
 

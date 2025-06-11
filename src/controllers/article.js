@@ -89,10 +89,7 @@ class ArticleController extends BaseController {
 
             const authorId = article.author._id;
 
-            // TODO: 將來可用 replica set 啟用 transaction 處理需 rollback 的情境 (delete 成功但 removePostedArticleFromAuthor 失敗)
-            const data = await this.service.delete(req.params.id);
-
-            await this.service.removePostedArticleFromAuthor(authorId, req.params.id);
+            await this.service.deleteWithTx(req.params.id, authorId);
 
             responseUtils.noContent(res, `${this.resourceName} deleted successfully`);
         } catch (error) {

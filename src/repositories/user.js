@@ -19,11 +19,11 @@ class UserRepository extends BaseRepository {
         );
     }
 
-    async removePostedArticleFromAuthor(authorId, articleId) {
+    async removePostedArticleFromAuthor(authorId, articleId, options = {}) {
         return this.model.findByIdAndUpdate(
             authorId,
             { $pull: { postedArticles: articleId } },
-            { new: true }
+            { ...options, new: true }
         );
     }
 }
