@@ -18,10 +18,6 @@ class ArticleService extends BaseService {
         return CategoryRepository.findOneByName(categoryName);
     }
 
-    async removePostedArticleFromAuthor(authorId, articleId) {
-        return UserRepository.removePostedArticleFromAuthor(authorId, articleId);
-    }
-
     async getAuthorIdByArticle(articleId) {
         return this.repository.getAuthorIdByArticle(articleId);
     }

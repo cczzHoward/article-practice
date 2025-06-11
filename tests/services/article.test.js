@@ -130,44 +130,6 @@ describe('ArticleService', () => {
         });
     });
 
-    describe('addPostedArticleToAuthor', () => {
-        it("should add article ID to author's posted articles", async () => {
-            // Arrange
-            const authorId = 'author123';
-            const articleId = 'article123';
-            UserRepository.addPostedArticleToAuthor.mockResolvedValue(true);
-
-            // Act
-            const result = await ArticleService.addPostedArticleToAuthor(authorId, articleId);
-
-            // Assert
-            expect(result).toBe(true);
-            expect(UserRepository.addPostedArticleToAuthor).toHaveBeenCalledWith(
-                authorId,
-                articleId
-            );
-        });
-    });
-
-    describe('removePostedArticleFromAuthor', () => {
-        it("should remove article ID from author's posted articles", async () => {
-            // Arrange
-            const authorId = 'author123';
-            const articleId = 'article123';
-            UserRepository.removePostedArticleFromAuthor.mockResolvedValue(true);
-
-            // Act
-            const result = await ArticleService.removePostedArticleFromAuthor(authorId, articleId);
-
-            // Assert
-            expect(result).toBe(true);
-            expect(UserRepository.removePostedArticleFromAuthor).toHaveBeenCalledWith(
-                authorId,
-                articleId
-            );
-        });
-    });
-
     describe('getAuthorIdByArticle', () => {
         it('should return author ID by article ID', async () => {
             // Arrange

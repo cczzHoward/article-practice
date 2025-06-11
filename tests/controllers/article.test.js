@@ -115,8 +115,10 @@ describe('ArticleController', () => {
             };
 
             ArticleService.getCategoryIdByName.mockResolvedValue({ _id: 'categoryId' });
-            ArticleService.create.mockResolvedValue({ _id: 'articleId', title: 'Test Article' });
-            ArticleService.addPostedArticleToAuthor.mockResolvedValue();
+            ArticleService.createWithTx.mockResolvedValue({
+                _id: 'articleId',
+                title: 'Test Article',
+            });
             // Act
             await ArticleController.create(mockReq, mockRes);
 
@@ -269,8 +271,7 @@ describe('ArticleController', () => {
                 _id: 'articleId',
                 author: { _id: 'authorId' },
             });
-            ArticleService.delete.mockResolvedValue({ _id: 'articleId' });
-            ArticleService.removePostedArticleFromAuthor.mockResolvedValue();
+            ArticleService.deleteWithTx.mockResolvedValue({ _id: 'articleId' });
 
             // Act
             await ArticleController.delete(mockReq, mockRes);
