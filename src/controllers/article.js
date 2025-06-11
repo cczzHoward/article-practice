@@ -44,17 +44,14 @@ class ArticleController extends BaseController {
                 return responseUtils.badRequest(res, 'Category not found');
             }
 
-            // TODO: 將來可用 replica set 啟用 transaction 處理需 rollback 的情境 (create 成功但 addPostedArticleToAuthor 失敗)
             const articleData = {
                 title,
                 content,
                 category: categoryId._id,
                 author: req.user.id,
             };
-            const data = await this.service.create(articleData);
 
-            // 將新創建的文章 ID 添加到作者的 postedArticles 中
-            await this.service.addPostedArticleToAuthor(req.user.id, data._id);
+            const data = await this.service.createWithTx(articleData, req.user.id);
 
             responseUtils.created(res, data, `${this.resourceName} created successfully`);
         } catch (error) {

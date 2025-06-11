@@ -18,10 +18,6 @@ class ArticleService extends BaseService {
         return CategoryRepository.findOneByName(categoryName);
     }
 
-    async addPostedArticleToAuthor(authorId, articleId) {
-        return UserRepository.addPostedArticleToAuthor(authorId, articleId);
-    }
-
     async removePostedArticleFromAuthor(authorId, articleId) {
         return UserRepository.removePostedArticleFromAuthor(authorId, articleId);
     }
@@ -45,7 +41,28 @@ class ArticleService extends BaseService {
             return true;
         } catch (err) {
             await session.abortTransaction();
-            console.log('Transaction aborted due to error:', err);
+            throw new Error(`Transaction failed: ${err.message}`);
+        } finally {
+            session.endSession();
+        }
+    }
+
+    async createWithTx(articleData, authorId) {
+        let session;
+        try {
+            session = await conn.startSession();
+            session.startTransaction();
+
+            // 創建文章
+            const article = await this.repository.create(articleData, { session });
+
+            // 將新創建的文章 ID 添加到作者的 postedArticles 中
+            await UserRepository.addPostedArticleToAuthor(authorId, article._id, { session });
+
+            await session.commitTransaction();
+            return article;
+        } catch (err) {
+            await session.abortTransaction();
             throw new Error(`Transaction failed: ${err.message}`);
         } finally {
             session.endSession();

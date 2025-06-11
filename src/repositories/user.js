@@ -11,11 +11,11 @@ class UserRepository extends BaseRepository {
         return this.model.findOne({ username });
     }
 
-    async addPostedArticleToAuthor(authorId, articleId) {
+    async addPostedArticleToAuthor(authorId, articleId, options = {}) {
         return this.model.findByIdAndUpdate(
             authorId,
             { $addToSet: { postedArticles: articleId } },
-            { new: true }
+            { ...options, new: true }
         );
     }
 

@@ -11,9 +11,9 @@ class BaseRepository {
         return this.model.findById(id);
     }
 
-    async create(data) {
+    async create(data, options = {}) {
         const doc = new this.model(data);
-        return doc.save();
+        return doc.save(options);
     }
 
     async update(id, data) {
