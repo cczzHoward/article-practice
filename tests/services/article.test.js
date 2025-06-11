@@ -2,6 +2,7 @@ const ArticleService = require('../../src/services/article');
 const ArticleRepository = require('../../src/repositories/article');
 const CategoryRepository = require('../../src/repositories/category');
 const UserRepository = require('../../src/repositories/user');
+const conn = require('../../src/database/dbConnection');
 
 jest.mock('../../src/repositories/article');
 jest.mock('../../src/repositories/category');
@@ -142,6 +143,125 @@ describe('ArticleService', () => {
             // Assert
             expect(result).toBe(mockAuthorId);
             expect(ArticleRepository.getAuthorIdByArticle).toHaveBeenCalledWith('article123');
+        });
+    });
+
+    describe('deleteWithTx', () => {
+        let mockSession;
+
+        beforeEach(() => {
+            mockSession = {
+                startTransaction: jest.fn(),
+                commitTransaction: jest.fn().mockResolvedValue(),
+                abortTransaction: jest.fn().mockResolvedValue(),
+                endSession: jest.fn(),
+            };
+            conn.startSession = jest.fn().mockResolvedValue(mockSession);
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('should delete article and remove postedArticle from author in a transaction', async () => {
+            // Arrange
+            ArticleRepository.delete.mockResolvedValue(true);
+            UserRepository.removePostedArticleFromAuthor.mockResolvedValue(true);
+
+            // Act
+            const articleId = 'article123';
+            const authorId = 'author456';
+
+            const result = await ArticleService.deleteWithTx(articleId, authorId);
+
+            // Assert
+            expect(conn.startSession).toHaveBeenCalled();
+            expect(mockSession.startTransaction).toHaveBeenCalled();
+            expect(ArticleRepository.delete).toHaveBeenCalledWith(articleId, {
+                session: mockSession,
+            });
+            expect(UserRepository.removePostedArticleFromAuthor).toHaveBeenCalledWith(
+                authorId,
+                articleId,
+                { session: mockSession }
+            );
+            expect(mockSession.commitTransaction).toHaveBeenCalled();
+            expect(mockSession.endSession).toHaveBeenCalled();
+            expect(result).toBe(true);
+        });
+
+        it('should abort transaction and throw error if any operation fails', async () => {
+            ArticleRepository.delete.mockResolvedValue(true);
+            UserRepository.removePostedArticleFromAuthor.mockRejectedValue(new Error('fail'));
+
+            const articleId = 'article123';
+            const authorId = 'author456';
+
+            await expect(ArticleService.deleteWithTx(articleId, authorId)).rejects.toThrow(
+                'Transaction failed: fail'
+            );
+            expect(mockSession.abortTransaction).toHaveBeenCalled();
+            expect(mockSession.endSession).toHaveBeenCalled();
+        });
+    });
+
+    describe('createWithTx', () => {
+        let mockSession;
+
+        beforeEach(() => {
+            mockSession = {
+                startTransaction: jest.fn(),
+                commitTransaction: jest.fn().mockResolvedValue(),
+                abortTransaction: jest.fn().mockResolvedValue(),
+                endSession: jest.fn(),
+            };
+            conn.startSession = jest.fn().mockResolvedValue(mockSession);
+        });
+
+        afterEach(() => {
+            jest.clearAllMocks();
+        });
+
+        it('should create article and add postedArticle to author in a transaction', async () => {
+            // Arrange
+            const mockArticle = { _id: 'article123', title: 'New Article' };
+            ArticleRepository.create.mockResolvedValue(mockArticle);
+            UserRepository.addPostedArticleToAuthor.mockResolvedValue(true);
+
+            // Act
+            const articleData = { title: 'New Article', content: 'Content here', category: '123' };
+            const authorId = 'author456';
+
+            const result = await ArticleService.createWithTx(articleData, authorId);
+
+            // Assert
+            expect(conn.startSession).toHaveBeenCalled();
+            expect(mockSession.startTransaction).toHaveBeenCalled();
+            expect(ArticleRepository.create).toHaveBeenCalledWith(articleData, {
+                session: mockSession,
+            });
+            expect(UserRepository.addPostedArticleToAuthor).toHaveBeenCalledWith(
+                authorId,
+                mockArticle._id,
+                { session: mockSession }
+            );
+            expect(mockSession.commitTransaction).toHaveBeenCalled();
+            expect(mockSession.endSession).toHaveBeenCalled();
+            expect(result).toEqual(mockArticle);
+        });
+
+        it('should abort transaction and throw error if any operation fails', async () => {
+            ArticleRepository.create.mockResolvedValue({ _id: 'article123' });
+            UserRepository.addPostedArticleToAuthor.mockRejectedValue(new Error('fail'));
+
+            const articleData = { title: 'New Article', content: 'Content here', category: '123' };
+            const authorId = 'author456';
+
+            await expect(ArticleService.createWithTx(articleData, authorId)).rejects.toThrow(
+                'Transaction failed: fail'
+            );
+            expect(mockSession.abortTransaction).toHaveBeenCalled();
+            expect(mockSession.endSession).toHaveBeenCalled();
         });
     });
 });
