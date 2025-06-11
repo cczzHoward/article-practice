@@ -325,9 +325,6 @@ src/
   讓使用者可以針對文章留言、互動。
 
 - 🧪 **持續優化測試與覆蓋率**  
-  針對低覆蓋率區塊補強測試，並考慮將密碼加密邏輯抽成 util function 以提升可測性。
-
-- ⚡ **支援 MongoDB Transaction（需 Replica Set）**  
-  將來可用 replica set 啟用 transaction，處理需 rollback 的情境（可以查詢 TODO 看實際狀況），以確保資料一致性。
+  針對低覆蓋率區塊補強測試。
 
 歡迎提供建議與回饋！
