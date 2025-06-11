@@ -129,6 +129,51 @@ src/
     ```
 6. 伺服器啟動後，預設監聽在 http://localhost:8080
 
+## 使用 Docker Compose 啟動 MongoDB Replica Set
+
+1. 啟動 Replica Set 叢集：
+
+    ```bash
+    docker-compose up -d
+    ```
+
+    這會啟動三個 MongoDB 節點（mongo1、mongo2、mongo3），並自動初始化 replica set。
+
+2. 等待幾秒鐘，確保 replica set 初始化完成。
+
+3. 預設三個節點的本機連接埠分別為：
+
+    - mongo1: 27017
+    - mongo2: 27018
+    - mongo3: 27019
+
+4. 你可以用 MongoDB Compass 連線字串：
+
+    ```
+    mongodb://localhost:27017,localhost:27018,localhost:27019/article-practice?replicaSet=rs0
+    ```
+
+5. 專案的 [`.env`](.env) 也請設定為：
+    ```
+    MONGODB_URI=mongodb://localhost:27017,localhost:27018,localhost:27019/article-practice?replicaSet=rs0
+    ```
+
+> 若本機已安裝 MongoDB，請先停用本機服務，避免 27017 port 衝突。
+
+---
+
+### ⚠️ 連線失敗時的 hosts 設定提醒
+
+如遇到 Compass 或程式連線 `mongo1`、`mongo2`、`mongo3` 失敗，請編輯本機 hosts 檔案（需用記事本以系統管理員身份執行），加入以下三行：
+
+```
+127.0.0.1 mongo1
+127.0.0.1 mongo2
+127.0.0.1 mongo3
+```
+
+儲存後，重新用 Compass 或你的程式連線即可。
+
 ## 主要 API 路徑範例
 
 - `POST   /api/v1/users/register` 註冊
