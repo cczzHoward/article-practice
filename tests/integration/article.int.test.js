@@ -37,25 +37,22 @@ describe('Article API Integration Tests', () => {
         expect(Array.isArray(response.body.data.data)).toBe(true);
     });
 
-    // it('should create a new article', async () => {
-    //     const newArticle = {
-    //         title: 'Test Article',
-    //         content: 'This is a test article content.',
-    //         category: '其他',
-    //     };
+    it('should create a new article', async () => {
+        const newArticle = {
+            title: 'Test Article',
+            content: 'This is a test article content.',
+            category: '其他',
+        };
 
-    //     const response = await request(app)
-    //         .post('/api/v1/articles/')
-    //         .set('Authorization', `Bearer ${token}`)
-    //         .send(newArticle);
+        const response = await request(app)
+            .post('/api/v1/articles/')
+            .set('Authorization', `Bearer ${token}`)
+            .send(newArticle);
 
-    //     // expect(response.statusCode).toBe(201);
-    //     expect(response.body).toBe(123);
-    //     expect(response.body.success).toBe(true);
-    //     expect(response.body.data.title).toBe(newArticle.title);
-    //     expect(response.body.data.content).toBe(newArticle.content);
-    //     expect(response.body.data.category.name).toBe(newArticle.category);
+        expect(response.statusCode).toBe(201);
+        expect(response.body.success).toBe(true);
+        expect(response.body.message).toBe('article created successfully');
 
-    //     articleId = response.body.data._id; // 保存新建文章的 ID
-    // });
+        articleId = response.body.data._id; // 保存新建文章的 ID
+    });
 });

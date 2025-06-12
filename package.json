@@ -8,6 +8,7 @@
         "watch": "nodemon src/server.js",
         "seed": "node src/database/seeders/index.js",
         "test": "jest --watchAll",
+        "test:integration": "jest selectProjects integration --detectOpenHandles",
         "test:coverage": "jest --coverage --detectOpenHandles",
         "format": "prettier --write ."
     },
@@ -38,6 +39,15 @@
                 ],
                 "setupFilesAfterEnv": [
                     "<rootDir>/tests/setup.unit.js"
+                ]
+            },
+            {
+                "displayName": "integration",
+                "testMatch": [
+                    "<rootDir>/tests/integration/**/*.test.js"
+                ],
+                "setupFilesAfterEnv": [
+                    "<rootDir>/tests/setup.int.js"
                 ]
             }
         ]
