@@ -84,7 +84,6 @@ class ArticleController extends BaseController {
             if (!isValidObjectId(req.params.id)) {
                 return responseUtils.badRequest(res, 'Invalid article ID');
             }
-            console.log('Deleting article with ID:', req.params.id);
             const article = await this.service.findById(req.params.id);
             if (!article) {
                 return responseUtils.notFound(res, `${this.resourceName} not found`);
@@ -97,7 +96,6 @@ class ArticleController extends BaseController {
             responseUtils.noContent(res, `${this.resourceName} deleted successfully`);
         } catch (error) {
             logger.error(`Error deleting ${this.resourceName}:`, error);
-            console.log('Error details:', error);
             responseUtils.error(res, `Error deleting ${this.resourceName}`);
         }
     }

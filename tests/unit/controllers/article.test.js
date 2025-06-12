@@ -261,7 +261,7 @@ describe('ArticleController', () => {
     describe('delete', () => {
         it('should return 204 on successful deletion', async () => {
             // Arrange
-            const mockReq = { params: { id: 'articleId' } };
+            const mockReq = { params: { id: '68491b9a31494240e0709b45' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 send: jest.fn(),
@@ -271,7 +271,7 @@ describe('ArticleController', () => {
                 _id: 'articleId',
                 author: { _id: 'authorId' },
             });
-            ArticleService.deleteWithTx.mockResolvedValue({ _id: 'articleId' });
+            ArticleService.deleteWithTx.mockResolvedValue({ _id: '68491b9a31494240e0709b45' });
 
             // Act
             await ArticleController.delete(mockReq, mockRes);
@@ -283,7 +283,7 @@ describe('ArticleController', () => {
 
         it('should return 404 if article not found', async () => {
             // Arrange
-            const mockReq = { params: { id: 'nonexistentId' } };
+            const mockReq = { params: { id: '68491b9a31494240e0709b45' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
@@ -303,7 +303,7 @@ describe('ArticleController', () => {
 
         it('should return 500 if service throws error', async () => {
             // Arrange
-            const mockReq = { params: { id: 'articleId' } };
+            const mockReq = { params: { id: '68491b9a31494240e0709b45' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),

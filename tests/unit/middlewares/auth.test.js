@@ -40,7 +40,7 @@ describe('auth middleware', () => {
         it('should call next if user is admin', async () => {
             const mockReq = {
                 user: { role: 'admin', username: 'admin' },
-                params: { id: 'articleId' },
+                params: { id: '68491b9a31494240e0709b45' },
             };
             const mockRes = {};
             const next = jest.fn();
@@ -54,7 +54,7 @@ describe('auth middleware', () => {
         it('should call next if user is article author', async () => {
             const mockReq = {
                 user: { role: 'user', username: 'author1' },
-                params: { id: 'articleId' },
+                params: { id: '68491b9a31494240e0709b45' },
             };
             const mockRes = {};
             const next = jest.fn();
@@ -68,7 +68,7 @@ describe('auth middleware', () => {
         it('should return notFound if article does not exist', async () => {
             const mockReq = {
                 user: { role: 'user', username: 'author1' },
-                params: { id: 'articleId' },
+                params: { id: '68491b9a31494240e0709b45' },
             };
             const mockRes = {};
             const next = jest.fn();
