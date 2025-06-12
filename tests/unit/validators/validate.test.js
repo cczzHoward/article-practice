@@ -1,8 +1,8 @@
-const validate = require('../../src/validators/validate');
-const responseUtils = require('../../src/utils/response');
+const validate = require('../../../src/validators/validate');
+const responseUtils = require('../../../src/utils/response');
 const Joi = require('joi');
 
-jest.mock('../../src/utils/response');
+jest.mock('../../../src/utils/response');
 
 describe('validate middleware', () => {
     let mockReq, mockRes, next;

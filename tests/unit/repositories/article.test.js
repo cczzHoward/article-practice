@@ -1,7 +1,7 @@
-const ArticleRepository = require('../../src/repositories/article');
-const ArticleModel = require('../../src/models/article');
+const ArticleRepository = require('../../../src/repositories/article');
+const ArticleModel = require('../../../src/models/article');
 
-jest.mock('../../src/models/article');
+jest.mock('../../../src/models/article');
 
 describe('ArticleRepository', () => {
     describe('create', () => {

@@ -1,7 +1,7 @@
-const UserService = require('../../src/services/user');
-const UserRepository = require('../../src/repositories/user');
+const UserService = require('../../../src/services/user');
+const UserRepository = require('../../../src/repositories/user');
 
-jest.mock('../../src/repositories/user');
+jest.mock('../../../src/repositories/user');
 
 describe('UserService', () => {
     describe('findAll', () => {

@@ -1,7 +1,7 @@
-const CategoryService = require('../../src/services/category');
-const CategoryRepository = require('../../src/repositories/category');
+const CategoryService = require('../../../src/services/category');
+const CategoryRepository = require('../../../src/repositories/category');
 
-jest.mock('../../src/repositories/category');
+jest.mock('../../../src/repositories/category');
 
 describe('CategoryService', () => {
     describe('findAll', () => {

@@ -1,7 +1,7 @@
-const UserRepository = require('../../src/repositories/user');
-const UserModel = require('../../src/models/user');
+const UserRepository = require('../../../src/repositories/user');
+const UserModel = require('../../../src/models/user');
 
-jest.mock('../../src/models/user');
+jest.mock('../../../src/models/user');
 
 describe('UserRepository', () => {
     describe('findAll', () => {

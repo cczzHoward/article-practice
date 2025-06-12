@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const UserModel = require('../../src/models/user');
+const UserModel = require('../../../src/models/user');
 
 jest.mock('bcrypt');
 

@@ -1,7 +1,7 @@
-const AuthService = require('../../src/services/auth');
-const UserRepository = require('../../src/repositories/user');
+const AuthService = require('../../../src/services/auth');
+const UserRepository = require('../../../src/repositories/user');
 
-jest.mock('../../src/repositories/user');
+jest.mock('../../../src/repositories/user');
 
 describe('AuthService', () => {
     describe('findAll', () => {

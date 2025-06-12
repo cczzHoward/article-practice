@@ -2,12 +2,12 @@ const {
     isAdmin,
     isArticleSelfOrAdmin,
     isUserSelfOrAdminButNotSelf,
-} = require('../../src/middlewares/auth');
-const responseUtils = require('../../src/utils/response');
-const ArticleService = require('../../src/services/article');
+} = require('../../../src/middlewares/auth');
+const responseUtils = require('../../../src/utils/response');
+const ArticleService = require('../../../src/services/article');
 
-jest.mock('../../src/utils/response');
-jest.mock('../../src/services/article');
+jest.mock('../../../src/utils/response');
+jest.mock('../../../src/services/article');
 
 describe('auth middleware', () => {
     describe('isAdmin', () => {

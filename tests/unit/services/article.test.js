@@ -1,12 +1,12 @@
-const ArticleService = require('../../src/services/article');
-const ArticleRepository = require('../../src/repositories/article');
-const CategoryRepository = require('../../src/repositories/category');
-const UserRepository = require('../../src/repositories/user');
-const conn = require('../../src/database/dbConnection');
+const ArticleService = require('../../../src/services/article');
+const ArticleRepository = require('../../../src/repositories/article');
+const CategoryRepository = require('../../../src/repositories/category');
+const UserRepository = require('../../../src/repositories/user');
+const conn = require('../../../src/database/dbConnection');
 
-jest.mock('../../src/repositories/article');
-jest.mock('../../src/repositories/category');
-jest.mock('../../src/repositories/user');
+jest.mock('../../../src/repositories/article');
+jest.mock('../../../src/repositories/category');
+jest.mock('../../../src/repositories/user');
 
 describe('ArticleService', () => {
     describe('findAll', () => {

@@ -8,7 +8,7 @@ const {
     notFound,
     conflict,
     error,
-} = require('../../src/utils/response');
+} = require('../../../src/utils/response');
 
 describe('Response Utils', () => {
     let res;

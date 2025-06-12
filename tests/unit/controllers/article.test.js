@@ -1,7 +1,7 @@
-const ArticleController = require('../../src/controllers/article');
-const ArticleService = require('../../src/services/article');
+const ArticleController = require('../../../src/controllers/article');
+const ArticleService = require('../../../src/services/article');
 
-jest.mock('../../src/services/article');
+jest.mock('../../../src/services/article');
 
 describe('ArticleController', () => {
     describe('getAll', () => {

@@ -1,9 +1,9 @@
-const UserController = require('../../src/controllers/user');
-const UserService = require('../../src/services/user');
+const CategoryController = require('../../../src/controllers/category');
+const CategoryService = require('../../../src/services/category');
 
-jest.mock('../../src/services/user');
+jest.mock('../../../src/services/category');
 
-describe('UserController', () => {
+describe('CategoryController', () => {
     describe('getAll', () => {
         it('should return 200 and users list', async () => {
             // Arrange
@@ -12,10 +12,10 @@ describe('UserController', () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.findAll.mockResolvedValue({ data: [], total: 0 });
+            CategoryService.findAll.mockResolvedValue({ data: [], total: 0 });
 
             // Act
-            await UserController.getAll(mockReq, mockRes);
+            await CategoryController.getAll(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -29,16 +29,16 @@ describe('UserController', () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.findAll.mockRejectedValue(new Error('DB error'));
+            CategoryService.findAll.mockRejectedValue(new Error('DB error'));
 
             // Act
-            await UserController.getAll(mockReq, mockRes);
+            await CategoryController.getAll(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(500);
             expect(mockRes.json).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    message: `Error fetching ${UserController.resourceName} list`,
+                    message: `Error fetching ${CategoryController.resourceName} list`,
                     success: false,
                 })
             );
@@ -46,40 +46,40 @@ describe('UserController', () => {
     });
 
     describe('getById', () => {
-        it('should return 200 and user by ID', async () => {
+        it('should return 200 and category by ID', async () => {
             // Arrange
             const mockReq = { params: { id: '123' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.findById.mockResolvedValue({ id: '123', name: 'Test User' });
+            CategoryService.findById.mockResolvedValue({ id: '123', name: 'Test Category' });
 
             // Act
-            await UserController.getById(mockReq, mockRes);
+            await CategoryController.getById(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(200);
             expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
         });
 
-        it('should return 404 if user not found', async () => {
+        it('should return 404 if category not found', async () => {
             // Arrange
-            const mockReq = { params: { id: 'nonExistentUserId' } };
+            const mockReq = { params: { id: '123' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.findById.mockResolvedValue(null);
+            CategoryService.findById.mockResolvedValue(null);
 
             // Act
-            await UserController.getById(mockReq, mockRes);
+            await CategoryController.getById(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(404);
             expect(mockRes.json).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    message: `${UserController.resourceName} not found`,
+                    message: `${CategoryController.resourceName} not found`,
                     success: false,
                 })
             );
@@ -92,16 +92,16 @@ describe('UserController', () => {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.findById.mockRejectedValue(new Error('DB error'));
+            CategoryService.findById.mockRejectedValue(new Error('DB error'));
 
             // Act
-            await UserController.getById(mockReq, mockRes);
+            await CategoryController.getById(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(500);
             expect(mockRes.json).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    message: `Error fetching ${UserController.resourceName} by ID`,
+                    message: `Error fetching ${CategoryController.resourceName} by ID`,
                     success: false,
                 })
             );
@@ -109,40 +109,45 @@ describe('UserController', () => {
     });
 
     describe('create', () => {
-        it('should return 201 and created user', async () => {
+        it('should return 201 and created category', async () => {
             // Arrange
-            const mockReq = { body: { name: 'New User' } };
+            const mockReq = { body: { name: 'New Category' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.create.mockResolvedValue({ id: 'newUserId', name: 'New User' });
+            CategoryService.create.mockResolvedValue({ id: '123', name: 'New Category' });
 
             // Act
-            await UserController.create(mockReq, mockRes);
+            await CategoryController.create(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(201);
-            expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
+            expect(mockRes.json).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: `${CategoryController.resourceName} created successfully`,
+                    success: true,
+                })
+            );
         });
 
         it('should return 500 if service throws error', async () => {
             // Arrange
-            const mockReq = { body: { name: 'New User' } };
+            const mockReq = { body: { name: 'New Category' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.create.mockRejectedValue(new Error('DB error'));
+            CategoryService.create.mockRejectedValue(new Error('DB error'));
 
             // Act
-            await UserController.create(mockReq, mockRes);
+            await CategoryController.create(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(500);
             expect(mockRes.json).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    message: `Error creating ${UserController.resourceName}`,
+                    message: `Error creating ${CategoryController.resourceName}`,
                     success: false,
                 })
             );
@@ -150,40 +155,45 @@ describe('UserController', () => {
     });
 
     describe('update', () => {
-        it('should return 200 and updated user', async () => {
+        it('should return 200 and updated category', async () => {
             // Arrange
-            const mockReq = { params: { id: '123' }, body: { name: 'Updated User' } };
+            const mockReq = { params: { id: '123' }, body: { name: 'Updated Category' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.update.mockResolvedValue({ id: '123', name: 'Updated User' });
+            CategoryService.update.mockResolvedValue({ id: '123', name: 'Updated Category' });
 
             // Act
-            await UserController.update(mockReq, mockRes);
+            await CategoryController.update(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(200);
-            expect(mockRes.json).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
+            expect(mockRes.json).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: `${CategoryController.resourceName} updated successfully`,
+                    success: true,
+                })
+            );
         });
 
-        it('should return 500 if service throws error during update', async () => {
+        it('should return 500 if service throws error', async () => {
             // Arrange
-            const mockReq = { params: { id: '123' }, body: { name: 'Updated User' } };
+            const mockReq = { params: { id: '123' }, body: { name: 'Updated Category' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.update.mockRejectedValue(new Error('DB error'));
+            CategoryService.update.mockRejectedValue(new Error('DB error'));
 
             // Act
-            await UserController.update(mockReq, mockRes);
+            await CategoryController.update(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(500);
             expect(mockRes.json).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    message: `Error updating ${UserController.resourceName}`,
+                    message: `Error updating ${CategoryController.resourceName}`,
                     success: false,
                 })
             );
@@ -191,60 +201,41 @@ describe('UserController', () => {
     });
 
     describe('delete', () => {
-        it('should return 204 when user is deleted successfully', async () => {
+        it('should return 204 on successful deletion', async () => {
             // Arrange
-            const mockReq = { params: { id: 'userId' } };
+            const mockReq = { params: { id: '123' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 send: jest.fn(),
             };
-            UserService.delete.mockResolvedValue({ id: 'userId' });
+            CategoryService.delete.mockResolvedValue();
 
             // Act
-            await UserController.delete(mockReq, mockRes);
+            await CategoryController.delete(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(204);
             expect(mockRes.send).toHaveBeenCalled();
         });
 
-        it('should return 404 when user is not found', async () => {
+        it('should return 500 if service throws error', async () => {
             // Arrange
-            const mockReq = { params: { id: 'nonExistentUserId' } };
+            const mockReq = { params: { id: '123' } };
             const mockRes = {
                 status: jest.fn().mockReturnThis(),
                 json: jest.fn(),
             };
-            UserService.delete.mockResolvedValue(null);
+            CategoryService.delete.mockRejectedValue(new Error('DB error'));
 
             // Act
-            await UserController.delete(mockReq, mockRes);
-
-            // Assert
-            expect(mockRes.status).toHaveBeenCalledWith(404);
-            expect(mockRes.json).toHaveBeenCalledWith(
-                expect.objectContaining({ message: 'User not found', success: false })
-            );
-        });
-
-        it('should return 500 when an error occurs', async () => {
-            // Arrange
-            const mockReq = { params: { id: 'userId' } };
-            const mockRes = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn(),
-            };
-            UserService.delete.mockRejectedValue(new Error('DB error'));
-
-            // Act
-            await UserController.delete(mockReq, mockRes);
+            await CategoryController.delete(mockReq, mockRes);
 
             // Assert
             expect(mockRes.status).toHaveBeenCalledWith(500);
             expect(mockRes.json).toHaveBeenCalledWith(
                 expect.objectContaining({
+                    message: `Error deleting ${CategoryController.resourceName}`,
                     success: false,
-                    message: 'Error deleting user with ID userId',
                 })
             );
         });

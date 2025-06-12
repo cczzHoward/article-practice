@@ -1,5 +1,5 @@
-const { logRequest } = require('../../src/middlewares/logger');
-const logger = require('../../src/utils/logger');
+const { logRequest } = require('../../../src/middlewares/logger');
+const logger = require('../../../src/utils/logger');
 
 describe('Logger Middleware', () => {
     let mockReq, mockRes, next;

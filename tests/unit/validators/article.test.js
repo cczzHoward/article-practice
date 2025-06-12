@@ -2,7 +2,7 @@ const {
     getAllArticlesSchema,
     createArticleSchema,
     updateArticleSchema,
-} = require('../../src/validators/article');
+} = require('../../../src/validators/article');
 
 describe('Article Validators', () => {
     describe('getAllArticlesSchema', () => {

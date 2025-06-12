@@ -1,7 +1,7 @@
-const CategoryRepository = require('../../src/repositories/category');
-const CategoryModel = require('../../src/models/category');
+const CategoryRepository = require('../../../src/repositories/category');
+const CategoryModel = require('../../../src/models/category');
 
-jest.mock('../../src/models/category');
+jest.mock('../../../src/models/category');
 
 describe('CategoryRepository', () => {
     describe('findAll', () => {
