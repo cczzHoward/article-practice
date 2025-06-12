@@ -1,5 +1,6 @@
 const responseUtils = require('../utils/response');
 const ArticleService = require('../services/article');
+const isValidObjectId = require('../utils/isValidObjectId');
 
 function isAdmin(req, res, next) {
     if (req.user.role === 'admin') return next();
@@ -8,6 +9,10 @@ function isAdmin(req, res, next) {
 
 // 僅限作者本人或 admin
 async function isArticleSelfOrAdmin(req, res, next) {
+    // TODO: 不知道這個檢查 ObjectId 的方法是不是好的，感覺有點冗長
+    if (!isValidObjectId(req.params.id)) {
+        return responseUtils.badRequest(res, 'Invalid article ID');
+    }
     const article = await ArticleService.findById(req.params.id);
 
     if (!article) {
