@@ -4,6 +4,7 @@ const ArticleController = require('../controllers/article');
 const passportMiddleware = require('../middlewares/passport');
 const validate = require('../validators/validate');
 const ArticleValidator = require('../validators/article');
+const CommonValidator = require('../validators/common');
 const { isArticleSelfOrAdmin } = require('../middlewares/auth');
 
 // 取得文章列表
@@ -14,7 +15,7 @@ router.get(
 );
 
 // 取得文章詳細內容
-router.get('/:id', ArticleController.getById);
+router.get('/:id', validate(CommonValidator.objectIdSchema, 'params'), ArticleController.getById);
 
 // 以下路由需要身份驗證
 router.use(passportMiddleware.authenticate('jwt', { session: false }));
@@ -25,12 +26,18 @@ router.post('/', validate(ArticleValidator.createArticleSchema), ArticleControll
 // 更新文章
 router.patch(
     '/:id',
-    isArticleSelfOrAdmin,
+    validate(CommonValidator.objectIdSchema, 'params'),
     validate(ArticleValidator.updateArticleSchema),
+    isArticleSelfOrAdmin,
     ArticleController.update
 );
 
 // 刪除文章(hard delete)
-router.delete('/:id', isArticleSelfOrAdmin, ArticleController.delete);
+router.delete(
+    '/:id',
+    validate(CommonValidator.objectIdSchema, 'params'),
+    isArticleSelfOrAdmin,
+    ArticleController.delete
+);
 
 module.exports = router;

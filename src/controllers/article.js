@@ -2,7 +2,6 @@ const ArticleService = require('../services/article');
 const BaseController = require('../base/baseController');
 const logger = require('../utils/logger');
 const responseUtils = require('../utils/response');
-const isValidObjectId = require('../utils/isValidObjectId');
 
 class ArticleController extends BaseController {
     constructor(service, resourceName) {
@@ -80,10 +79,6 @@ class ArticleController extends BaseController {
     async delete(req, res) {
         try {
             // 檢查文章是否存在
-            // TODO: 不知道這個檢查 ObjectId 的方法是不是好的，感覺有點冗長
-            if (!isValidObjectId(req.params.id)) {
-                return responseUtils.badRequest(res, 'Invalid article ID');
-            }
             const article = await this.service.findById(req.params.id);
             if (!article) {
                 return responseUtils.notFound(res, `${this.resourceName} not found`);

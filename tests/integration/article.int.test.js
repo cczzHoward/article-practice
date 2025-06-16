@@ -256,7 +256,7 @@ describe('Article API Integration Tests', () => {
 
             expect(response.statusCode).toBe(400);
             expect(response.body.success).toBe(false);
-            expect(response.body.message).toBe('Invalid article ID');
+            expect(response.body.message).toBe('Validation failed');
         });
 
         it("user should not delete another user's article", async () => {
