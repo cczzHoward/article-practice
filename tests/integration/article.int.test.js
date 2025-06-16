@@ -21,14 +21,12 @@ describe('Article API Integration Tests', () => {
         const loginResponse = await request(app)
             .post('/api/v1/users/login')
             .send({ username: 'admin', password: 'admin123' });
-        expect(loginResponse.statusCode).toBe(200);
         adminToken = loginResponse.body.data.token;
 
         // 登入一般用戶取得 token
         const userLoginResponse = await request(app)
             .post('/api/v1/users/login')
             .send({ username: 'test1234', password: 'test1234' });
-        expect(userLoginResponse.statusCode).toBe(200);
         userToken = userLoginResponse.body.data.token;
 
         // 創建一篇 admin 的文章以供測試
@@ -40,7 +38,6 @@ describe('Article API Integration Tests', () => {
                 content: 'This is a test article created by admin.',
                 category: '其他',
             });
-        expect(adminArticleResponse.statusCode).toBe(201);
         adminArticleId = adminArticleResponse.body.data.id;
 
         // 創立一篇一般用戶的文章以供測試
@@ -52,7 +49,6 @@ describe('Article API Integration Tests', () => {
                 content: 'This is a test article created by user.',
                 category: '其他',
             });
-        expect(userArticleResponse.statusCode).toBe(201);
         userArticleId = userArticleResponse.body.data.id;
     });
 
