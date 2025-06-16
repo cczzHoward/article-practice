@@ -81,6 +81,7 @@ describe('Article API Integration Tests', () => {
     });
 
     describe('create a new article', () => {
+        let createdArticleId;
         it('user should not create an article without token', async () => {
             const newArticle = {
                 title: 'Unauthorized Article',
@@ -122,10 +123,18 @@ describe('Article API Integration Tests', () => {
                 .post('/api/v1/articles/')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send(newArticle);
+            createdArticleId = response.body.data.id;
 
             expect(response.statusCode).toBe(201);
             expect(response.body.success).toBe(true);
             expect(response.body.message).toBe('article created successfully');
+        });
+
+        afterAll(async () => {
+            // 清理測試資料庫中的文章
+            await request(app)
+                .delete(`/api/v1/articles/${createdArticleId}`)
+                .set('Authorization', `Bearer ${adminToken}`);
         });
     });
 
