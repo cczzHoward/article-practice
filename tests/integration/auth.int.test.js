@@ -58,52 +58,132 @@ describe('Auth API Integration Tests', () => {
     });
 
     describe('login to get JWT', () => {
-        it('should login successfully and return JWT', () => {
-            // Test logic for successful login
-            expect(true).toBe(true);
+        it('should login successfully and return JWT', async () => {
+            const userCredentials = {
+                username: 'inttestuser',
+                password: 'iamtestuser',
+            };
+
+            const response = await request(app).post('/api/v1/users/login').send(userCredentials);
+            expect(response.statusCode).toBe(200);
+            expect(response.body.data).toHaveProperty('token');
+            expect(response.body.message).toBe('User logged in successfully');
+            expect(response.body.success).toBe(true);
         });
 
-        it('should fail to login with incorrect credentials', () => {
-            // Test logic for failed login due to incorrect credentials
-            expect(true).toBe(true);
+        it('should fail to login with incorrect credentials', async () => {
+            const wrongCredentials = {
+                username: 'inttestuser',
+                password: 'wrongpassword',
+            };
+
+            const response = await request(app).post('/api/v1/users/login').send(wrongCredentials);
+            expect(response.statusCode).toBe(401);
+            expect(response.body.data).toBeNull();
+            expect(response.body.message).toBe('Invalid username or password');
+            expect(response.body.success).toBe(false);
         });
     });
 
     describe('change password with token', () => {
-        let jwtToken;
+        let userToken;
 
-        beforeAll(() => {
-            // Simulate user login to get JWT token
+        beforeAll(async () => {
+            const userCredentials = {
+                username: 'inttestuser',
+                password: 'iamtestuser',
+            };
+
+            const response = await request(app).post('/api/v1/users/login').send(userCredentials);
+            userToken = response.body.data.token;
         });
 
-        it('should change password successfully with valid token', () => {
-            // Test logic for changing password with valid JWT token
-            expect(true).toBe(true);
+        it('should change password successfully with valid token', async () => {
+            const changePasswordData = {
+                oldPassword: 'iamtestuser',
+                newPassword: 'newtestpassword',
+            };
+
+            const response = await request(app)
+                .post('/api/v1/users/change-password')
+                .set('Authorization', `Bearer ${userToken}`)
+                .send(changePasswordData);
+            expect(response.statusCode).toBe(200);
+            expect(response.body.data).toBeNull();
+            expect(response.body.message).toBe('Password changed successfully');
+            expect(response.body.success).toBe(true);
         });
 
-        it('should fail to change password with invalid token', () => {
-            // Test logic for changing password with invalid JWT token
-            expect(true).toBe(true);
+        it('should fail to change password with invalid token', async () => {
+            const changePasswordData = {
+                oldPassword: 'newtestpassword',
+                newPassword: 'anothernewpassword',
+            };
+
+            const response = await request(app)
+                .post('/api/v1/users/change-password')
+                .set('Authorization', 'Bearer invalidtoken')
+                .send(changePasswordData);
+            expect(response.statusCode).toBe(401);
+            expect(response.text).toBe('Unauthorized');
         });
 
-        it('should fail to change password without token', () => {
-            // Test logic for changing password without JWT token
-            expect(true).toBe(true);
+        it('should fail to change password without token', async () => {
+            const changePasswordData = {
+                oldPassword: 'newtestpassword',
+                newPassword: 'anothernewpassword',
+            };
+
+            const response = await request(app)
+                .post('/api/v1/users/change-password')
+                .send(changePasswordData);
+            expect(response.statusCode).toBe(401);
+            expect(response.text).toBe('Unauthorized');
         });
 
-        it('should fail to change password if oldPassword is wrong', () => {
-            // Test logic for changing password with insufficient permissions
-            expect(true).toBe(true);
+        it('should fail to change password if oldPassword is wrong', async () => {
+            const changePasswordData = {
+                oldPassword: 'wrongoldpassword',
+                newPassword: 'anothernewpassword',
+            };
+
+            const response = await request(app)
+                .post('/api/v1/users/change-password')
+                .set('Authorization', `Bearer ${userToken}`)
+                .send(changePasswordData);
+            expect(response.statusCode).toBe(401);
+            expect(response.body.data).toBeNull();
+            expect(response.body.message).toBe('Invalid old password');
+            expect(response.body.success).toBe(false);
         });
 
-        it('should fail to change password without newPassword', () => {
-            // Test logic for changing password with invalid new password
-            expect(true).toBe(true);
+        it('should fail to change password without newPassword', async () => {
+            const changePasswordData = {
+                oldPassword: 'newtestpassword',
+            };
+
+            const response = await request(app)
+                .post('/api/v1/users/change-password')
+                .set('Authorization', `Bearer ${userToken}`)
+                .send(changePasswordData);
+            expect(response.statusCode).toBe(400);
+            expect(response.body.message).toBe('Validation failed');
+            expect(response.body.success).toBe(false);
         });
 
-        it('should fail to change password with invalid newPassword format', () => {
-            // Test logic for changing password with invalid new password format
-            expect(true).toBe(true);
+        it('should fail to change password with invalid newPassword format', async () => {
+            const changePasswordData = {
+                oldPassword: 'newtestpassword',
+                newPassword: 'no',
+            };
+
+            const response = await request(app)
+                .post('/api/v1/users/change-password')
+                .set('Authorization', `Bearer ${userToken}`)
+                .send(changePasswordData);
+            expect(response.statusCode).toBe(400);
+            expect(response.body.message).toBe('Validation failed');
+            expect(response.body.success).toBe(false);
         });
     });
 });
