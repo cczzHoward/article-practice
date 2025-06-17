@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 describe('Auth API Integration Tests', () => {
     let adminToken, testUserId;
     beforeAll(async () => {
-        // 連接到測試資料庫 const dbUri = process.env.MONGODB_URI;
+        // 連接到測試資料庫
         const dbUri = process.env.MONGODB_URI;
         await mongoose.connect(dbUri);
     });
@@ -29,6 +29,7 @@ describe('Auth API Integration Tests', () => {
         // 關閉資料庫連接
         await mongoose.connection.close();
     });
+
     describe('register a new user', () => {
         it('should register a new user successfully', async () => {
             const newUser = {
