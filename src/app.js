@@ -9,6 +9,7 @@ const ArticleRouter = require('./routes/article');
 const AuthRouter = require('./routes/auth');
 const CategoryRouter = require('./routes/category');
 const UserRouter = require('./routes/user');
+const CommentRouter = require('./routes/comment');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,5 +28,6 @@ app.use('/api/v1/users', AuthRouter);
 app.use('/api/v1/users', UserRouter);
 app.use('/api/v1/articles', ArticleRouter);
 app.use('/api/v1/categories', CategoryRouter);
+app.use('/api/v1/comments', CommentRouter);
 
 module.exports = app;

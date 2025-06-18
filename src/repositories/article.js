@@ -60,6 +60,14 @@ class ArticleRepository extends BaseRepository {
     async getAuthorIdByArticle(articleId) {
         return this.model.findById(articleId).select('author -_id');
     }
+
+    async addCommentToArticle(articleId, commentId, options = {}) {
+        return this.model.findByIdAndUpdate(
+            articleId,
+            { $push: { comments: commentId } },
+            { new: true, ...options }
+        );
+    }
 }
 
 module.exports = new ArticleRepository(ArticleModel);
