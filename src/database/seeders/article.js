@@ -186,6 +186,7 @@ const articlesData = [
 ];
 
 async function seedArticles() {
+    console.log('Seeding articles...');
     await ArticleModel.deleteMany({});
 
     // 取得所有 user 的 ObjectId 對照表

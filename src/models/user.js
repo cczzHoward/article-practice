@@ -25,6 +25,7 @@ const userSchema = new Schema({
         enum: ['admin', 'user'],
         default: 'user',
     },
+    // TODO: 更改成 snake_case 統一風格
     postedArticles: [
         {
             type: Schema.Types.ObjectId,

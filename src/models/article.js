@@ -24,6 +24,13 @@ const articleSchema = new Schema({
         required: true,
         trim: true,
     },
+    comments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Comment',
+            default: [],
+        },
+    ],
 });
 
 articleSchema.plugin(BaseSchema); // Apply the base schema plugin

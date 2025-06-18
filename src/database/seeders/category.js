@@ -14,6 +14,7 @@ const categoriesData = [
 ];
 
 async function seedCategories() {
+    console.log('Seeding categories...');
     await CategoryModel.deleteMany({});
     for (const category of categoriesData) {
         await CategoryModel.create(category);

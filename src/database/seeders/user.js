@@ -14,6 +14,7 @@ const users = [
 ];
 
 async function seedUsers() {
+    console.log('Seeding users...');
     await UserModel.deleteMany({});
     for (const user of users) {
         // 這樣才會觸發 pre-save hash 密碼的 middleware
