@@ -87,6 +87,7 @@ describe('ArticleRepository', () => {
             const populateMock = jest.fn();
             populateMock
                 .mockReturnValueOnce({ populate: populateMock })
+                .mockReturnValueOnce({ populate: populateMock })
                 .mockReturnValueOnce(mockArticle);
 
             ArticleModel.findById.mockReturnValue({ populate: populateMock });
@@ -108,6 +109,7 @@ describe('ArticleRepository', () => {
 
             // 建立 chainable mock
             const chain = {
+                select: jest.fn().mockReturnThis(),
                 populate: jest.fn().mockReturnThis(),
                 skip: jest.fn().mockReturnThis(),
                 limit: jest.fn().mockReturnThis(),
