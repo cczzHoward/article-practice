@@ -18,7 +18,12 @@ class ArticleRepository extends BaseRepository {
         return this.model
             .findById(id)
             .populate('author', 'username _id')
-            .populate('category', 'name -_id');
+            .populate('category', 'name -_id')
+            .populate({
+                path: 'comments',
+                select: 'content created_at user',
+                populate: { path: 'user', select: 'username -_id' },
+            });
     }
 
     // TODO: 完成 comments 的開發後要加入 populate
@@ -37,6 +42,7 @@ class ArticleRepository extends BaseRepository {
         const [data, total] = await Promise.all([
             this.model
                 .find(filter)
+                .select('-comments')
                 .populate('author', 'username -_id')
                 .populate('category', 'name -_id')
                 .skip(skip)
