@@ -38,7 +38,7 @@ class CommentController extends BaseController {
             const userId = req.user.id;
 
             const result = await this.service.deleteCommentWithTx(commentId, userId);
-            return responseUtils.success(res, null, 'Comment deleted successfully');
+            return responseUtils.noContent(res, 'Comment deleted successfully');
         } catch (error) {
             logger.error('Error in delete comment:', error);
 
