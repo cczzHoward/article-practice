@@ -24,7 +24,7 @@ class CommentController extends BaseController {
         } catch (error) {
             logger.error('Error in create comment:', error);
 
-            if (error.message === 'Article not found') {
+            if (error.message.includes('Article not found')) {
                 return responseUtils.notFound(res, 'Article not found');
             }
 
