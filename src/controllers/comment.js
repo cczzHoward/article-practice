@@ -31,6 +31,31 @@ class CommentController extends BaseController {
             return responseUtils.error(res, 'Internal server error');
         }
     }
+
+    async delete(req, res) {
+        try {
+            const commentId = req.params.id;
+            const userId = req.user.id;
+
+            const result = await this.service.deleteCommentWithTx(commentId, userId);
+            return responseUtils.success(res, null, 'Comment deleted successfully');
+        } catch (error) {
+            logger.error('Error in delete comment:', error);
+
+            if (error.message.includes('Comment not found')) {
+                return responseUtils.notFound(res, 'Comment not found');
+            } else if (
+                error.message.includes('You do not have permission to delete this comment')
+            ) {
+                return responseUtils.forbidden(
+                    res,
+                    'You do not have permission to delete this comment'
+                );
+            }
+
+            return responseUtils.error(res, 'Internal server error');
+        }
+    }
     // 可以在這裡添加 CommentController 特有的方法
 }
 

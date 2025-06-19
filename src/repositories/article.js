@@ -22,7 +22,7 @@ class ArticleRepository extends BaseRepository {
             .populate({
                 path: 'comments',
                 select: 'content created_at user',
-                populate: { path: 'user', select: 'username -_id' },
+                populate: { path: 'user', select: 'username' },
             });
     }
 
@@ -43,7 +43,7 @@ class ArticleRepository extends BaseRepository {
             this.model
                 .find(filter)
                 .select('-comments')
-                .populate('author', 'username -_id')
+                .populate('author', 'username')
                 .populate('category', 'name -_id')
                 .skip(skip)
                 .limit(limit)
@@ -71,6 +71,14 @@ class ArticleRepository extends BaseRepository {
         return this.model.findByIdAndUpdate(
             articleId,
             { $push: { comments: commentId } },
+            { new: true, ...options }
+        );
+    }
+
+    async removeCommentFromArticle(articleId, commentId, options = {}) {
+        return this.model.findByIdAndUpdate(
+            articleId,
+            { $pull: { comments: commentId } },
             { new: true, ...options }
         );
     }

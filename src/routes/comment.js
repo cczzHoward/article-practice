@@ -18,6 +18,6 @@ router.post(
 );
 
 // 刪除留言
-// router.delete('/:id', CommentController.delete);
+router.delete('/:id', validate(CommonValidator.objectIdSchema, 'params'), CommentController.delete);
 
 module.exports = router;

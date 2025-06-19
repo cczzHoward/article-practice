@@ -38,6 +38,41 @@ class CommentService extends BaseService {
             session.endSession();
         }
     }
+
+    async deleteCommentWithTx(commentId, userId) {
+        let session;
+        try {
+            session = await conn.startSession();
+            session.startTransaction();
+
+            // 檢查評論是否存在
+            const comment = await this.repository.findById(commentId);
+            if (!comment) {
+                throw new Error('Comment not found');
+            }
+
+            // 檢查用戶是否有權限刪除評論
+            if (comment.user._id.toString() !== userId.toString()) {
+                throw new Error('You do not have permission to delete this comment');
+            }
+
+            // 刪除評論
+            await this.repository.delete(commentId, { session });
+
+            // 從文章的 comments 中移除評論 ID
+            await ArticleRepository.removeCommentFromArticle(comment.article._id, commentId, {
+                session,
+            });
+
+            await session.commitTransaction();
+            return true;
+        } catch (err) {
+            await session.abortTransaction();
+            throw new Error(`Transaction failed: ${err.message}`);
+        } finally {
+            session.endSession();
+        }
+    }
 }
 
 module.exports = new CommentService(CommentRepository);

@@ -7,17 +7,11 @@ class CommentRepository extends BaseRepository {
     }
 
     async findAll(filter = {}) {
-        return this.model
-            .find(filter)
-            .populate('article', 'title -_id')
-            .populate('user', 'username -_id');
+        return this.model.find(filter).populate('article', 'title').populate('user', 'username');
     }
 
     async findById(id) {
-        return this.model
-            .findById(id)
-            .populate('article', 'title -_id')
-            .populate('user', 'username -_id');
+        return this.model.findById(id).populate('article', 'title').populate('user', 'username');
     }
 
     // CommentRepository 自己特有的方法可以從這裡往下寫
