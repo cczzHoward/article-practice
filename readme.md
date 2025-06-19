@@ -7,7 +7,7 @@
 - 學習並實踐分層架構設計
 - 熟悉 Express 與 MongoDB 開發
 - 實作安全的使用者認證與授權
-- 提升 API 開發與維護能力
+- 提升 API 開發、測試與維護能力
 
 ## 架構說明
 
@@ -20,6 +20,7 @@
 - **Utils**：統一回應格式、日誌等工具。
 - **Validator**：集中管理 Joi 驗證規則與 middleware。
 - **Seeder**：資料初始化腳本，快速建立測試資料。
+- **Test**：分為 unit test 及 integration test，並支援 coverage 報告。
 
 ## 功能列表
 
@@ -29,13 +30,14 @@
 - [x] 發佈、編輯、刪除文章（需登入，權限控管）
 - [x] 瀏覽文章列表、查看文章詳情（公開）
 - [x] 文章分類功能（Category Model，文章關聯分類）
+- [x] 評論功能（留言、刪除、查詢，權限控管）
 - [x] 日誌紀錄
 - [x] 統一 API 回應格式
 - [x] Joi Validator
 - [x] 基礎 CRUD base 類別
-- [x] Seeder
-- [x] 權限控管
-- [x] 單元測試與覆蓋率
+- [x] Seeder（user、category、article、comment，支援自動關聯）
+- [x] 權限控管（admin/user 細緻權限）
+- [x] 單元測試與整合測試，含 coverage 報告
 
 ## 技術棧
 
@@ -44,7 +46,8 @@
 - **認證**：JWT + Passport + bcrypt
 - **驗證**：Joi
 - **日誌**：winston
-- **其他工具**：dotenv、nodemon、Postman
+- **測試**：Jest
+- **其他工具**：dotenv、nodemon、Postman、Docker Compose
 
 ## 專案結構
 
@@ -62,33 +65,43 @@ src/
     article.js
     auth.js
     category.js
+    user.js
+    comment.js
   database/
     dbConnection.js
     seeders/
       user.js
       article.js
       category.js
+      comment.js
       index.js
   middlewares/
     auth.js
     logger.js
     passport.js
+    validateObjectId.js
   models/
     article.js
     user.js
     category.js
+    comment.js
   repositories/
     article.js
     user.js
     category.js
+    comment.js
   routes/
     article.js
     auth.js
     category.js
+    user.js
+    comment.js
   services/
     article.js
     auth.js
     category.js
+    user.js
+    comment.js
   utils/
     logger.js
     response.js
@@ -98,7 +111,11 @@ src/
   validators/
     article.js
     auth.js
+    category.js
+    user.js
+    comment.js
     validate.js
+    common.js
 ```
 
 ## 如何啟動專案
@@ -113,12 +130,18 @@ src/
     npm install
     ```
 3. 建立 `.env` 檔案，內容如下：
+
     ```env
+    # 單機 MongoDB
     MONGODB_URI=mongodb://localhost:27017/article-practice
+    # 若用 Replica Set，請改用下方設定
+    # MONGODB_URI=mongodb://localhost:27017,localhost:27018,localhost:27019/article-practice?replicaSet=rs0
+
     JWT_SECRET=your_jwt_secret
     JWT_EXPIRATION=1h
     BCRYPT_SALT_ROUNDS=10
     ```
+
 4. 啟動伺服器：
     ```bash
     npm run app
@@ -186,6 +209,8 @@ src/
 - `POST   /api/v1/articles/` 新增文章（需登入）
 - `PATCH  /api/v1/articles/:id` 編輯文章（需登入，僅限作者本人或管理員）
 - `DELETE /api/v1/articles/:id` 刪除文章（需登入，僅限作者本人或管理員）
+- `POST   /api/v1/comments/` 新增評論（需登入）
+- `DELETE /api/v1/comments/:id` 刪除評論（需登入，僅限評論作者或管理員）
 
 ## 資料庫設計
 
@@ -209,6 +234,14 @@ src/
 - `title` (String, 必填)
 - `author` (ObjectId, 必填, 參照 User)
 - `category` (ObjectId, 必填, 參照 Category)
+- `content` (String, 必填)
+- `created_at` (Date)
+- `updated_at` (Date)
+
+### Comment
+
+- `article` (ObjectId, 必填, 參照 Article)
+- `author` (ObjectId, 必填, 參照 User)
 - `content` (String, 必填)
 - `created_at` (Date)
 - `updated_at` (Date)
@@ -240,13 +273,15 @@ src/
 - 註冊與登入 API 會產生 JWT，前端需將 token 存於 localStorage 或 header。
 - 受保護的 API 需在 header 加上 `Authorization: Bearer <token>`。
 - 使用 passport-jwt 驗證 token，並將用戶資訊掛載於 `req.user`。
-- 密碼加密採用 bcrypt。
+- 密碼加密採用 bcrypt，密碼長度與格式由 Joi 驗證。
 - 登出僅需前端移除 token，後端不維護黑名單。
+- 權限控管涵蓋文章、評論、用戶等資源，細緻區分 admin/user 權限。
 
 ## Joi Validator 使用說明
 
-- 所有請求參數驗證皆集中於 `src/validators/`，每個資源一個檔案（如 `auth.js`, `article.js`）。
+- 所有請求參數驗證皆集中於 `src/validators/`，每個資源一個檔案（如 `auth.js`, `article.js`, `comment.js`）。
 - 驗證 middleware 統一由 `validate.js` 提供，路由中直接使用。
+- 針對 ObjectId 格式驗證，已抽出共用 middleware（`validateObjectId.js`）。
 - 範例：
     ```js
     const validate = require('../validators/validate');
@@ -257,8 +292,8 @@ src/
 ## Seeder 使用說明
 
 - Seeder 腳本集中於 `src/database/seeders/`。
-- 執行 `npm run seed` 會依序初始化預設分類、用戶、文章資料，並自動關聯正確的 user/category ObjectId。
-- 如需自訂初始資料，請編輯 `user.js`、`category.js`、`article.js`。
+- 執行 `npm run seed` 會依序初始化預設分類、用戶、文章、評論資料，並自動關聯正確的 user/category/article ObjectId。
+- 如需自訂初始資料，請編輯 `user.js`、`category.js`、`article.js`、`comment.js`。
 - 可依需求擴充更多 seeder 檔案。
 
 ## 日誌管理
@@ -282,13 +317,13 @@ src/
 
 ## 權限與身分管理
 
-- 🛡️ **增加身分功能（如：管理員、一般使用者）**
-    - 使用者模型（User Model）已新增 `role` 欄位，預設為 `"user"`，管理員為 `"admin"`。
+- 🛡️ **身分功能（管理員、一般使用者）**
+    - 使用者模型（User Model）有 `role` 欄位，預設為 `"user"`，管理員為 `"admin"`。
     - JWT 登入時會帶入 `role` 權限資訊，並於 Passport 驗證後掛載於 `req.user`。
     - 路由層已加入權限 middleware：
-        - **管理員（admin）** 可管理所有文章，且只能刪除自己以外的用戶帳號。
-        - **一般使用者（user）** 僅能管理自己的內容（如：只能編輯/刪除自己發表的文章，僅能刪除自己的帳號）。
-    - 文章相關 API（編輯、刪除）已於 route 層加入 `isSelfOrAdmin` 權限控管。
+        - **管理員（admin）** 可管理所有文章、評論，且只能刪除自己以外的用戶帳號。
+        - **一般使用者（user）** 僅能管理自己的內容（如：只能編輯/刪除自己發表的文章、評論，僅能刪除自己的帳號）。
+    - 文章、評論相關 API（編輯、刪除）已於 route 層加入 `isSelfOrAdmin` 權限控管。
     - 用戶管理相關 API（如：刪除用戶）已支援細緻權限控管，詳見 [`src/middlewares/auth.js`](src/middlewares/auth.js) 及 [`src/routes/user.js`](src/routes/user.js)。
 
 ### 權限範例
@@ -296,14 +331,16 @@ src/
 - `POST   /api/v1/articles/` 新增文章（需登入，所有用戶皆可）
 - `PATCH  /api/v1/articles/:id` 編輯文章（僅作者本人或管理員可編輯）
 - `DELETE /api/v1/articles/:id` 刪除文章（僅作者本人或管理員可刪除）
+- `POST   /api/v1/comments/` 新增評論（需登入，所有用戶皆可）
+- `DELETE /api/v1/comments/:id` 刪除評論（僅評論作者或管理員可刪除）
 - `DELETE /api/v1/users/:id` 刪除用戶（管理員只能刪除自己以外的用戶，一般用戶只能刪除自己）
 
 > 權限相關邏輯請參考 [`src/middlewares/auth.js`](src/middlewares/auth.js) 及 [`src/routes/article.js`](src/routes/article.js)、[`src/routes/user.js`](src/routes/user.js)
 
 ## 單元測試與覆蓋率
 
-- **測試覆蓋範圍**：已涵蓋 Controller、Service、Repository、Middleware、Utils、Validator、Model 各層，包含自訂 schema method（如 `comparePassword`）與 pre-save hook。
-- **測試結構**：測試檔案分布於 `tests/` 目錄下，依層級分類（如 `tests/controllers/`、`tests/services/` 等）。
+- **測試覆蓋範圍**：已涵蓋 Controller、Service、Repository、Middleware、Utils、Validator、Model 各層，包含自訂 schema method（如 `comparePassword`）、pre-save hook，以及評論（Comment）功能的 CRUD 流程。
+- **測試結構**：測試檔案分布於 `tests/` 目錄下，依層級分類（如 `tests/controllers/`、`tests/services/`、`tests/integration/` 等）。
 - **測試框架**：採用 Jest，所有測試可於本地直接執行，無需額外設定。
 - **執行測試**：
     ```bash
@@ -316,15 +353,13 @@ src/
     產生報告於 `coverage/lcov-report/index.html`，可用瀏覽器開啟檢視每個檔案的覆蓋率。
 - **查找低覆蓋率檔案**：可依 coverage 報告追蹤尚未覆蓋的程式碼區塊，針對性補強測試。
 - **Jest 進階 matcher**：測試中大量運用 `expect.arrayContaining`、`expect.stringContaining`、`toMatch` 等 matcher，提升測試彈性。
+- **整合測試**：已針對主要 API（使用者、文章、分類、評論）進行 integration test，驗證實際 API 串接與資料庫互動流程。
 
 ---
 
 ## 未來規劃
 
-- 💬 **增加評論功能**  
-  讓使用者可以針對文章留言、互動。
-
 - 🧪 **持續優化測試與覆蓋率**  
-  針對低覆蓋率區塊補強測試。
+  針對低覆蓋率區塊補強測試，並持續優化 integration test 覆蓋面。
 
 歡迎提供建議與回饋！
