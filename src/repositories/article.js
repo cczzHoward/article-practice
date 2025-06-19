@@ -26,7 +26,6 @@ class ArticleRepository extends BaseRepository {
             });
     }
 
-    // TODO: 完成 comments 的開發後要加入 populate
     async searchAndPaginate({ keyword, category, page, limit }) {
         const filter = {};
         if (keyword) {
