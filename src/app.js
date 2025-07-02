@@ -3,6 +3,7 @@ const app = express();
 require('dotenv').config();
 
 const loggerMiddleware = require('./middlewares/logger');
+const corsMiddleware = require('./middlewares/cors');
 const responseUtils = require('./utils/response');
 
 const ArticleRouter = require('./routes/article');
@@ -14,6 +15,7 @@ const CommentRouter = require('./routes/comment');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(corsMiddleware);
 app.use(loggerMiddleware.logRequest);
 
 app.get('/', (req, res) => {
