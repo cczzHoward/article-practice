@@ -181,6 +181,24 @@ src/
     docker-compose down
     ```
 
+### 疑難排解：連線資料庫
+
+**Q: 使用 MongoDB Compass 連線時出現 `getaddrinfo ENOTFOUND mongo1` 錯誤？**
+
+- **原因**：當您使用 `localhost` 連線字串時，Compass 會成功連上第一個節點 (`mongo2`)。但 `mongo1` 會告訴 Compass 它的夥伴位於 `mongo2:27017` 和 `mongo3:27017`。您的主機（Windows/macOS）並不認識 `mongo2` 這個 Docker 內部的服務名稱，因此無法解析位址而報錯。
+
+- **解決方案**：編輯您本機的 `hosts` 檔案，讓您的電腦也能解析 Docker 的服務名稱。
+
+    1.  **以系統管理員身份**開啟**記事本 (Notepad)** 或其他文字編輯器。
+    2.  開啟檔案 `C:\Windows\System32\drivers\etc\hosts`。
+    3.  在檔案最下方加入以下三行：
+        ```
+        127.0.0.1 mongo1
+        127.0.0.1 mongo2
+        127.0.0.1 mongo3
+        ```
+    4.  儲存檔案。完成後，您的 MongoDB Compass 應該就能正常連線，並且不會再出現 `ENOTFOUND` 錯誤。
+
 ## 主要 API 路徑範例
 
 - `POST   /api/v1/users/register` 註冊
