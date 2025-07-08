@@ -118,84 +118,68 @@ src/
     common.js
 ```
 
-## 如何啟動專案
+## 如何啟動專案 (使用 Docker)
 
-1. 複製專案到本地：
+本專案推薦使用 Docker Compose 進行啟動，可以一鍵部署後端應用程式與 MongoDB Replica Set 資料庫叢集。
+
+**前置需求：** 請先安裝 [Docker](https://www.docker.com/) 與 [Docker Compose](https://docs.docker.com/compose/install/)。
+
+1.  **複製專案到本地：**
+
     ```bash
     git clone git@github.com:cczzHoward/article-practice.git
     cd article-practice
     ```
-2. 安裝依賴：
-    ```bash
-    npm install
-    ```
-3. 建立 `.env` 檔案，內容如下：
+
+2.  **設定環境變數：**
+    專案根目錄下通常會有一個 `docker.env` 檔案，用於 Docker 環境。如果此檔案不存在，請手動建立一個，並填入以下內容作為範例：
 
     ```env
-    # 單機 MongoDB
-    MONGODB_URI=mongodb://localhost:27017/article-practice
-    # 若用 Replica Set，請改用下方設定
-    # MONGODB_URI=mongodb://localhost:27017,localhost:27018,localhost:27019/article-practice?replicaSet=rs0
+    # docker.env
+    MONGODB_URI=mongodb://mongo1:27017,mongo2:27017,mongo3:27017/article-practice?replicaSet=rs0
 
-    JWT_SECRET=your_jwt_secret
-    JWT_EXPIRATION=1h
     BCRYPT_SALT_ROUNDS=10
+    JWT_SECRET='your_super_secret_for_jwt'
+    JWT_EXPIRATION='1h'
     ```
 
-4. 啟動伺服器：
-    ```bash
-    npm run app
-    ```
-5. 執行 Seeder 初始化資料：
-    ```bash
-    npm run seed
-    ```
-6. 伺服器啟動後，預設監聽在 http://localhost:8080
+    `MONGODB_URI` 已設定為容器間的連線位址，通常不需修改。請務必將 `JWT_SECRET` 更換為您自己的安全密鑰。
 
-## 使用 Docker Compose 啟動 MongoDB Replica Set
-
-1. 啟動 Replica Set 叢集：
+3.  **啟動所有服務：**
 
     ```bash
-    docker-compose up -d
+    docker-compose up -d --build
     ```
 
-    這會啟動三個 MongoDB 節點（mongo1、mongo2、mongo3），並自動初始化 replica set。
+    此指令會建置後端服務的 Docker image，並在背景啟動後端服務與三個 MongoDB 節點。
 
-2. 等待幾秒鐘，確保 replica set 初始化完成。
+4.  **確認服務狀態：**
 
-3. 預設三個節點的本機連接埠分別為：
-
-    - mongo1: 27017
-    - mongo2: 27018
-    - mongo3: 27019
-
-4. 你可以用 MongoDB Compass 連線字串：
-
-    ```
-    mongodb://localhost:27017,localhost:27018,localhost:27019/article-practice?replicaSet=rs0
+    ```bash
+    docker-compose ps
     ```
 
-5. 專案的 [`.env`](.env) 也請設定為：
+    若 `backend`、`mongo1`、`mongo2`、`mongo3`、`init-replica` 服務的狀態 (State/Status) 皆為 `Up` 或 `healthy`，表示服務已成功啟動。
+
+5.  **執行 Seeder 初始化資料：**
+    在另一個終端機視窗，進入專案目錄後執行以下指令，進入後端容器並執行 seeder：
+
+    ```bash
+    docker-compose exec backend npm run seed
     ```
-    MONGODB_URI=mongodb://localhost:27017,localhost:27018,localhost:27019/article-practice?replicaSet=rs0
+
+6.  **完成！**
+
+    - 後端 API 服務運行於： `http://localhost:8080`
+    - MongoDB Replica Set 可透過以下連線字串從本機 (例如使用 MongoDB Compass) 連線：
+        ```
+        mongodb://localhost:27017,localhost:27018,localhost:27019/article-practice?replicaSet=rs0
+        ```
+
+7.  **關閉服務：**
+    ```bash
+    docker-compose down
     ```
-
-> 若本機已安裝 MongoDB，請先停用本機服務，避免 27017 port 衝突。
-
----
-
-### ⚠️ 連線失敗時的 hosts 設定提醒
-
-如遇到 Compass 或程式連線 `mongo1`、`mongo2`、`mongo3` 失敗，請編輯本機 hosts 檔案（需用記事本以系統管理員身份執行），加入以下三行：
-
-```
-127.0.0.1 mongo1
-127.0.0.1 mongo2
-127.0.0.1 mongo3
-```
-
-儲存後，重新用 Compass 或你的程式連線即可。
 
 ## 主要 API 路徑範例
 
@@ -209,7 +193,7 @@ src/
 - `POST   /api/v1/articles/` 新增文章（需登入）
 - `PATCH  /api/v1/articles/:id` 編輯文章（需登入，僅限作者本人或管理員）
 - `DELETE /api/v1/articles/:id` 刪除文章（需登入，僅限作者本人或管理員）
-- `POST   /api/v1/comments/` 新增評論（需登入）
+- `POST   /api/v1/comments/:articleId` 新增評論（需登入）
 - `DELETE /api/v1/comments/:id` 刪除評論（需登入，僅限評論作者或管理員）
 
 ## 資料庫設計
@@ -235,6 +219,7 @@ src/
 - `author` (ObjectId, 必填, 參照 User)
 - `category` (ObjectId, 必填, 參照 Category)
 - `content` (String, 必填)
+- `comments` (Array<ObjectId>, 參照 Comment, 預設空陣列)
 - `created_at` (Date)
 - `updated_at` (Date)
 
@@ -292,7 +277,7 @@ src/
 ## Seeder 使用說明
 
 - Seeder 腳本集中於 `src/database/seeders/`。
-- 執行 `npm run seed` 會依序初始化預設分類、用戶、文章、評論資料，並自動關聯正確的 user/category/article ObjectId。
+- 執行 `docker-compose exec backend npm run seed` 會依序初始化預設分類、用戶、文章、評論資料，並自動關聯正確的 ObjectId。
 - 如需自訂初始資料，請編輯 `user.js`、`category.js`、`article.js`、`comment.js`。
 - 可依需求擴充更多 seeder 檔案。
 
@@ -323,7 +308,7 @@ src/
     - 路由層已加入權限 middleware：
         - **管理員（admin）** 可管理所有文章、評論，且只能刪除自己以外的用戶帳號。
         - **一般使用者（user）** 僅能管理自己的內容（如：只能編輯/刪除自己發表的文章、評論，僅能刪除自己的帳號）。
-    - 文章、評論相關 API（編輯、刪除）已於 route 層加入 `isSelfOrAdmin` 權限控管。
+    - 文章、評論相關 API（編輯、刪除）已於 route 層加入權限控管 middleware。
     - 用戶管理相關 API（如：刪除用戶）已支援細緻權限控管，詳見 [`src/middlewares/auth.js`](src/middlewares/auth.js) 及 [`src/routes/user.js`](src/routes/user.js)。
 
 ### 權限範例
@@ -331,7 +316,7 @@ src/
 - `POST   /api/v1/articles/` 新增文章（需登入，所有用戶皆可）
 - `PATCH  /api/v1/articles/:id` 編輯文章（僅作者本人或管理員可編輯）
 - `DELETE /api/v1/articles/:id` 刪除文章（僅作者本人或管理員可刪除）
-- `POST   /api/v1/comments/` 新增評論（需登入，所有用戶皆可）
+- `POST   /api/v1/comments/:articleId` 新增評論（需登入，所有用戶皆可）
 - `DELETE /api/v1/comments/:id` 刪除評論（僅評論作者或管理員可刪除）
 - `DELETE /api/v1/users/:id` 刪除用戶（管理員只能刪除自己以外的用戶，一般用戶只能刪除自己）
 
@@ -361,8 +346,5 @@ src/
 
 - 🧪 **持續優化測試與覆蓋率**  
   針對低覆蓋率區塊補強測試，並持續優化 integration test 覆蓋面。
-
-- 🐳 **後端服務容器化**  
-  將後端 Node.js 應用程式打包成 Docker image，與資料庫一同透過 Docker Compose 管理，實現開發與部署環境一致性。
 
 歡迎提供建議與回饋！
