@@ -3,6 +3,7 @@ node_modules/
 
 # .env files
 .env
+docker.env
 
 # log files
 src/utils/logs/*

@@ -1,0 +1,17 @@
+# 忽略 Git 的資料夾
+.git
+
+# 忽略本地的 Node.js 依賴，容器會自己安裝
+node_modules
+
+# 忽略本地的環境變數檔案
+.env
+
+# 忽略日誌檔案
+src/utils/logs
+
+# 忽略測試覆蓋率報告
+coverage
+
+# 忽略 npm 的偵錯日誌
+npm-debug.log

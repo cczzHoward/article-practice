@@ -32,7 +32,10 @@ services:
             - mongo3
         entrypoint: >
             bash -c "
-              sleep 10 &&
+              until mongosh --host mongo1 --eval 'quit(0)'; do
+                sleep 5;
+              done;
+
               mongosh --host mongo1 --eval '
                 rs.initiate({
                   _id: \"rs0\",
@@ -42,5 +45,21 @@ services:
                     { _id: 2, host: \"mongo3:27017\" }
                   ]
                 })
-              '
+              ';
             "
+
+    backend:
+        build: .
+        ports:
+            - '8080:8080'
+        env_file:
+            - ./docker.env
+        depends_on:
+            - mongo1
+            - mongo2
+            - mongo3
+            - init-replica
+        command: npm run watch
+        volumes:
+            - .:/usr/src/app
+            - /usr/src/app/node_modules
