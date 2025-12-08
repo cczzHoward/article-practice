@@ -2,64 +2,107 @@ version: '3.8'
 services:
     mongo1:
         image: mongo:6
+        container_name: mongo1
         ports:
             - 27017:27017
         command: mongod --replSet rs0 --bind_ip_all
         volumes:
             - ./data/mongo1:/data/db
+        networks:
+            - mongo-network
 
     mongo2:
         image: mongo:6
+        container_name: mongo2
         ports:
             - 27018:27017
         command: mongod --replSet rs0 --bind_ip_all
         volumes:
             - ./data/mongo2:/data/db
+        networks:
+            - mongo-network
 
     mongo3:
         image: mongo:6
+        container_name: mongo3
         ports:
             - 27019:27017
         command: mongod --replSet rs0 --bind_ip_all
         volumes:
             - ./data/mongo3:/data/db
+        networks:
+            - mongo-network
 
     init-replica:
         image: mongo:6
+        container_name: init-replica
         depends_on:
             - mongo1
             - mongo2
             - mongo3
+        networks:
+            - mongo-network
+        restart: 'no'
         entrypoint: >
             bash -c "
-              until mongosh --host mongo1 --eval 'quit(0)'; do
-                sleep 5;
+              echo 'Waiting for MongoDB nodes...';
+              until mongosh --host mongo1 --eval 'quit(0)' > /dev/null 2>&1; do
+                sleep 3;
               done;
-
+              
+              echo 'Checking Replica Set status...';
               mongosh --host mongo1 --eval '
-                rs.initiate({
-                  _id: \"rs0\",
-                  members: [
-                    { _id: 0, host: \"mongo1:27017\" },
-                    { _id: 1, host: \"mongo2:27017\" },
-                    { _id: 2, host: \"mongo3:27017\" }
-                  ]
-                })
+                try {
+                  const status = rs.status();
+                  print(\"Replica set already initialized:\", status.set);
+                } catch(e) {
+                  print(\"Initializing Replica Set...\");
+                  rs.initiate({
+                    _id: \"rs0\",
+                    members: [
+                      { _id: 0, host: \"mongo1:27017\" },
+                      { _id: 1, host: \"mongo2:27017\" },
+                      { _id: 2, host: \"mongo3:27017\" }
+                    ]
+                  });
+                  print(\"Replica set initialized\");
+                }
               ';
+              
+              echo 'Waiting for PRIMARY election...';
+              MAX_TRIES=30;
+              TRIES=0;
+              while [ \$TRIES -lt \$MAX_TRIES ]; do
+                if mongosh --host mongo1 --quiet --eval 'rs.status().members.find(m => m.stateStr === \"PRIMARY\")' > /dev/null 2>&1; then
+                  echo 'PRIMARY elected successfully!';
+                  exit 0;
+                fi;
+                echo \"Waiting for PRIMARY... (\$TRIES/\$MAX_TRIES)\";
+                sleep 2;
+                TRIES=\$((TRIES + 1));
+              done;
+              
+              echo 'Timeout waiting for PRIMARY';
+              exit 1;
             "
 
     backend:
         build: .
+        container_name: backend
         ports:
             - '8080:8080'
         env_file:
             - ./docker.env
         depends_on:
-            - mongo1
-            - mongo2
-            - mongo3
             - init-replica
         command: npm run watch
         volumes:
             - .:/usr/src/app
             - /usr/src/app/node_modules
+        networks:
+            - mongo-network
+        restart: unless-stopped
+
+networks:
+    mongo-network:
+        driver: bridge
