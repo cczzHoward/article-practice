@@ -40,4 +40,18 @@ router.delete(
     ArticleController.delete
 );
 
+// 按讚文章
+router.post(
+    '/:id/like',
+    validate(CommonValidator.objectIdSchema, 'params'),
+    ArticleController.like
+);
+
+// 取消按讚文章
+router.delete(
+    '/:id/like',
+    validate(CommonValidator.objectIdSchema, 'params'),
+    ArticleController.unlike
+);
+
 module.exports = router;

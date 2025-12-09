@@ -31,6 +31,13 @@ const articleSchema = new Schema({
             default: [],
         },
     ],
+    likedBy: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            default: [],
+        },
+    ],
 });
 
 articleSchema.plugin(BaseSchema); // Apply the base schema plugin

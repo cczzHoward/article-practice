@@ -6,6 +6,8 @@ const responseUtils = require('../utils/response');
 class ArticleController extends BaseController {
     constructor(service, resourceName) {
         super(service, resourceName);
+        this.like = this.like.bind(this);
+        this.unlike = this.unlike.bind(this);
     }
 
     // 這裡可以覆寫 BaseController 的方法，或添加 ArticleController 特有的方法
@@ -93,6 +95,36 @@ class ArticleController extends BaseController {
         } catch (error) {
             logger.error(`Error deleting ${this.resourceName}:`, error);
             responseUtils.error(res, `Error deleting ${this.resourceName}`);
+        }
+    }
+
+    async like(req, res) {
+        try {
+            const article = await this.service.findById(req.params.id);
+            if (!article) {
+                return responseUtils.notFound(res, `${this.resourceName} not found`);
+            }
+
+            const updatedArticle = await this.service.addLike(req.params.id, req.user.id);
+            responseUtils.success(res, updatedArticle, 'Article liked successfully');
+        } catch (error) {
+            logger.error(`Error liking ${this.resourceName}:`, error);
+            responseUtils.error(res, `Error liking ${this.resourceName}`);
+        }
+    }
+
+    async unlike(req, res) {
+        try {
+            const article = await this.service.findById(req.params.id);
+            if (!article) {
+                return responseUtils.notFound(res, `${this.resourceName} not found`);
+            }
+
+            const updatedArticle = await this.service.removeLike(req.params.id, req.user.id);
+            responseUtils.success(res, updatedArticle, 'Article unliked successfully');
+        } catch (error) {
+            logger.error(`Error unliking ${this.resourceName}:`, error);
+            responseUtils.error(res, `Error unliking ${this.resourceName}`);
         }
     }
 }

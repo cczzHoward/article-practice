@@ -64,6 +64,14 @@ class ArticleService extends BaseService {
             session.endSession();
         }
     }
+
+    async addLike(articleId, userId) {
+        return this.repository.addLike(articleId, userId);
+    }
+
+    async removeLike(articleId, userId) {
+        return this.repository.removeLike(articleId, userId);
+    }
 }
 
 module.exports = new ArticleService(ArticleRepository);

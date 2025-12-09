@@ -15,7 +15,7 @@ class ArticleRepository extends BaseRepository {
     }
 
     async findById(id) {
-        return this.model
+        const doc = await this.model
             .findById(id)
             .populate('author', 'username _id')
             .populate('category', 'name -_id')
@@ -23,7 +23,17 @@ class ArticleRepository extends BaseRepository {
                 path: 'comments',
                 select: 'content created_at user',
                 populate: { path: 'user', select: 'username' },
-            });
+            })
+            .lean();
+
+        if (!doc) return null;
+
+        return {
+            ...doc,
+            comments_count: doc.comments ? doc.comments.length : 0,
+            likes_count: doc.likedBy ? doc.likedBy.length : 0,
+            id: doc._id,
+        };
     }
 
     async searchAndPaginate({ keyword, category, author, page, limit }) {
@@ -45,7 +55,7 @@ class ArticleRepository extends BaseRepository {
             this.model
                 .find(filter)
                 .select(
-                    'title content author category created_at updated_at comments tags cover_image likes'
+                    'title content author category created_at updated_at comments tags cover_image likedBy'
                 )
                 .populate('author', 'username avatar')
                 .populate('category', 'name -_id')
@@ -60,6 +70,7 @@ class ArticleRepository extends BaseRepository {
             ...doc,
             comments_count: doc.comments ? doc.comments.length : 0,
             comments: undefined, // Remove comments array to reduce payload
+            likes_count: doc.likedBy ? doc.likedBy.length : 0,
             id: doc._id,
         }));
 
@@ -93,6 +104,22 @@ class ArticleRepository extends BaseRepository {
             articleId,
             { $pull: { comments: commentId } },
             { new: true, ...options }
+        );
+    }
+
+    async addLike(articleId, userId) {
+        return this.model.findByIdAndUpdate(
+            articleId,
+            { $addToSet: { likedBy: userId } },
+            { new: true }
+        );
+    }
+
+    async removeLike(articleId, userId) {
+        return this.model.findByIdAndUpdate(
+            articleId,
+            { $pull: { likedBy: userId } },
+            { new: true }
         );
     }
 }
