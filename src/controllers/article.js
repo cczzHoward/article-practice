@@ -11,7 +11,7 @@ class ArticleController extends BaseController {
     // 這裡可以覆寫 BaseController 的方法，或添加 ArticleController 特有的方法
     async getAll(req, res) {
         try {
-            const { keyword, category, page, limit } = req.query;
+            const { keyword, category, page, limit, author } = req.query;
             let categoryId = null;
 
             // 取得 categoryId
@@ -25,6 +25,7 @@ class ArticleController extends BaseController {
             const result = await ArticleService.searchAndPaginate({
                 keyword,
                 category: categoryId,
+                author,
                 page: parseInt(page, 10) || 1,
                 limit: parseInt(limit, 10) || 10,
             });

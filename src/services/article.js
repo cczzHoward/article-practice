@@ -10,8 +10,8 @@ class ArticleService extends BaseService {
     }
 
     // ArticleService 自己特有的方法可以從這裡往下寫
-    async searchAndPaginate({ keyword, category, page, limit }) {
-        return this.repository.searchAndPaginate({ keyword, category, page, limit });
+    async searchAndPaginate({ keyword, category, author, page, limit }) {
+        return this.repository.searchAndPaginate({ keyword, category, author, page, limit });
     }
 
     async getCategoryIdByName(categoryName) {
