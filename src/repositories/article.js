@@ -41,17 +41,28 @@ class ArticleRepository extends BaseRepository {
             filter.author = author;
         }
         const skip = (page - 1) * limit;
-        const [data, total] = await Promise.all([
+        const [docs, total] = await Promise.all([
             this.model
                 .find(filter)
-                .select('-comments')
-                .populate('author', 'username')
+                .select(
+                    'title content author category created_at updated_at comments tags cover_image likes'
+                )
+                .populate('author', 'username avatar')
                 .populate('category', 'name -_id')
                 .skip(skip)
                 .limit(limit)
-                .sort({ created_at: -1 }),
+                .sort({ created_at: -1 })
+                .lean(),
             this.model.countDocuments(filter),
         ]);
+
+        const data = docs.map((doc) => ({
+            ...doc,
+            comments_count: doc.comments ? doc.comments.length : 0,
+            comments: undefined, // Remove comments array to reduce payload
+            id: doc._id,
+        }));
+
         return {
             data,
             total,
