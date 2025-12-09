@@ -51,7 +51,7 @@
 
 ## 專案結構
 
-```
+```text
 src/
   app.js
   base/
