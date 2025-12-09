@@ -24,6 +24,16 @@ const articleSchema = new Schema({
         required: true,
         trim: true,
     },
+    tags: [
+        {
+            type: String,
+            trim: true,
+        },
+    ],
+    cover_image: {
+        type: String,
+        trim: true,
+    },
     comments: [
         {
             type: Schema.Types.ObjectId,

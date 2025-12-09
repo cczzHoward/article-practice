@@ -2,44 +2,39 @@ const CommentModel = require('../../models/comment');
 const ArticleModel = require('../../models/article');
 const UserModel = require('../../models/user');
 
-const commentsData = [
-    // 你可以根據實際文章標題與用戶名稱調整
-    { article: 'Hello World', user: 'test1234', content: '很棒的文章！' },
-    { article: 'Hello World', user: 'jane', content: '受益良多，謝謝分享。' },
-    { article: 'Second Post', user: 'bob', content: '請問有範例程式碼嗎？' },
-    { article: 'Node.js Tips', user: 'alice', content: 'Node.js 真的很實用！' },
-    { article: 'MongoDB Guide', user: 'john', content: '期待更多資料庫相關內容。' },
-    { article: 'Tech Trends 2024', user: 'admin', content: '趨勢分析很到位！' },
-    { article: 'User Experience', user: 'eva', content: 'UX 很重要，推！' },
-    { article: 'Security Basics', user: 'frank', content: '安全議題值得重視。' },
-    { article: 'RESTful API Design', user: 'charlie', content: 'API 設計原則很實用。' },
-    { article: 'Testing Strategies', user: 'david', content: '測試策略講得很清楚。' },
-];
-
 async function seedComments() {
+    const { faker } = await import('@faker-js/faker/locale/zh_TW');
     console.log('Seeding comments...');
     await CommentModel.deleteMany({});
 
-    // 取得所有 user 的 ObjectId 對照表
-    const users = await UserModel.find({}, 'username _id');
-    const userMap = {};
-    users.forEach((user) => {
-        userMap[user.username] = user._id;
-    });
+    // 取得所有 user 的 ObjectId
+    const users = await UserModel.find({}, '_id');
+    if (users.length === 0) {
+        console.log('No users found. Skipping comment seeding.');
+        return;
+    }
 
-    // 取得所有 article 的 ObjectId 對照表
-    const articles = await ArticleModel.find({}, 'title _id');
-    const articleMap = {};
-    articles.forEach((article) => {
-        articleMap[article.title] = article._id;
-    });
+    // 取得所有 article 的 ObjectId
+    const articles = await ArticleModel.find({}, '_id');
+    if (articles.length === 0) {
+        console.log('No articles found. Skipping comment seeding.');
+        return;
+    }
 
-    // 將 username/article 轉成 ObjectId
-    const comments = commentsData.map((comment) => ({
-        ...comment,
-        article: articleMap[comment.article],
-        user: userMap[comment.user],
-    }));
+    const comments = [];
+    const commentCount = 100; // 生成 100 則留言
+
+    for (let i = 0; i < commentCount; i++) {
+        const randomUser = users[Math.floor(Math.random() * users.length)];
+        const randomArticle = articles[Math.floor(Math.random() * articles.length)];
+
+        comments.push({
+            content: faker.lorem.sentences(2), // 生成 2 句隨機留言
+            article: randomArticle._id,
+            user: randomUser._id,
+            created_at: faker.date.recent(),
+        });
+    }
 
     const insertedComments = await CommentModel.insertMany(comments);
 
@@ -64,7 +59,7 @@ async function seedComments() {
     );
     await Promise.all(updatePromises);
 
-    console.log('Comment seeding done!');
+    console.log(`Comment seeding done! Created ${insertedComments.length} comments.`);
 }
 
 module.exports = seedComments;
