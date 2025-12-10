@@ -36,7 +36,7 @@ class ArticleRepository extends BaseRepository {
         };
     }
 
-    async searchAndPaginate({ keyword, category, author, page, limit }) {
+    async searchAndPaginate({ keyword, category, author, likedBy, page, limit }) {
         const filter = {};
         if (keyword) {
             filter.$or = [
@@ -49,6 +49,9 @@ class ArticleRepository extends BaseRepository {
         }
         if (author) {
             filter.author = author;
+        }
+        if (likedBy) {
+            filter.likedBy = likedBy;
         }
         const skip = (page - 1) * limit;
         const [docs, total] = await Promise.all([

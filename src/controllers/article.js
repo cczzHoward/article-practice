@@ -8,6 +8,7 @@ class ArticleController extends BaseController {
         super(service, resourceName);
         this.like = this.like.bind(this);
         this.unlike = this.unlike.bind(this);
+        this.getLiked = this.getLiked.bind(this);
     }
 
     // 這裡可以覆寫 BaseController 的方法，或添加 ArticleController 特有的方法
@@ -125,6 +126,21 @@ class ArticleController extends BaseController {
         } catch (error) {
             logger.error(`Error unliking ${this.resourceName}:`, error);
             responseUtils.error(res, `Error unliking ${this.resourceName}`);
+        }
+    }
+
+    async getLiked(req, res) {
+        try {
+            const { page, limit } = req.query;
+            const result = await ArticleService.searchAndPaginate({
+                likedBy: req.user.id,
+                page: parseInt(page, 10) || 1,
+                limit: parseInt(limit, 10) || 10,
+            });
+            responseUtils.success(res, result, 'Get liked articles success');
+        } catch (error) {
+            logger.error('Error in getLiked:', error);
+            responseUtils.error(res, 'Internal server error');
         }
     }
 }

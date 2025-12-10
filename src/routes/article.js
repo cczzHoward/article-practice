@@ -14,6 +14,13 @@ router.get(
     ArticleController.getAll
 );
 
+// 取得使用者按讚的文章
+router.get(
+    '/liked',
+    passportMiddleware.authenticate('jwt', { session: false }),
+    ArticleController.getLiked
+);
+
 // 取得文章詳細內容
 router.get('/:id', validate(CommonValidator.objectIdSchema, 'params'), ArticleController.getById);
 
