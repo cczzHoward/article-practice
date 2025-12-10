@@ -38,12 +38,16 @@ const createArticleSchema = Joi.object({
             '其他'
         )
         .required(),
+    tags: Joi.array().items(Joi.string().trim()).optional(),
+    cover_image: Joi.string().uri().allow('').optional(),
 }).required();
 
 const updateArticleSchema = Joi.object({
     title: Joi.string().min(1).max(128),
     content: Joi.string().min(1).max(25565),
-}).or('title', 'content');
+    tags: Joi.array().items(Joi.string().trim()),
+    cover_image: Joi.string().uri().allow(''),
+}).or('title', 'content', 'tags', 'cover_image');
 
 module.exports = {
     getAllArticlesSchema,

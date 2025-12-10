@@ -41,7 +41,7 @@ class ArticleController extends BaseController {
 
     async create(req, res) {
         try {
-            const { title, content, category } = req.body;
+            const { title, content, category, tags, cover_image } = req.body;
 
             const categoryId = await this.service.getCategoryIdByName(category);
             if (!categoryId) {
@@ -53,6 +53,8 @@ class ArticleController extends BaseController {
                 content,
                 category: categoryId._id,
                 author: req.user.id,
+                tags,
+                cover_image,
             };
 
             const data = await this.service.createWithTx(articleData, req.user.id);
