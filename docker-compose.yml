@@ -92,6 +92,8 @@ services:
             - '8080:8080'
         env_file:
             - ./docker.env
+        environment:
+            - TZ=Asia/Taipei
         depends_on:
             - init-replica
         command: npm run watch

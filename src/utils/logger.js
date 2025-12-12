@@ -13,7 +13,6 @@ const logger = winston.createLogger({
     format: combine(
         timestamp({
             format: 'YYYY-MM-DD HH:mm:ss',
-            tz: 'Asia/Taipei', // UTC+8
         }),
         myFormat
     ),
