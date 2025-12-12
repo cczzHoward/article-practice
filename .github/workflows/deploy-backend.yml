@@ -17,8 +17,20 @@ jobs:
                   username: ${{ secrets.DROPLET_USER }}
                   key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
                   script: |
+                      set -e  # 任何指令失敗就立即停止
                       cd /root/article-practice
                       git pull origin master
                       docker compose down
                       docker compose up -d --build
+
+                      # 等待容器啟動
+                      sleep 5
+
+                      # 檢查容器是否正常運行
+                      if ! docker compose ps | grep -q "backend.*Up"; then
+                        echo "❌ Backend container failed to start"
+                        docker compose logs backend
+                        exit 1
+                      fi
+
                       echo "✅ Backend deployed successfully!"

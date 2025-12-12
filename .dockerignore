@@ -15,3 +15,14 @@ coverage
 
 # 忽略 npm 的偵錯日誌
 npm-debug.log
+
+# 忽略 MongoDB 數據目錄
+data/
+
+# 忽略 GitHub Actions 相關
+.github/
+
+# 忽略 Docker 相關檔案
+docker-compose.yml
+Dockerfile
+.dockerignore
