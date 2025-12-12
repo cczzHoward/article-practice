@@ -10,7 +10,13 @@ const myFormat = printf(({ level, message, timestamp }) => {
 
 const logger = winston.createLogger({
     level: 'info',
-    format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), myFormat),
+    format: combine(
+        timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss',
+            tz: 'Asia/Taipei', // UTC+8
+        }),
+        myFormat
+    ),
     transports: [
         new winston.transports.Console(),
         new winston.transports.File({ filename: path.join(logDir, 'error.log'), level: 'error' }),
