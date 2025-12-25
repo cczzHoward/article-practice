@@ -78,7 +78,7 @@ class AuthController {
                     'New password cannot be the same as old password'
                 );
             } else if (error.message === 'Invalid old password') {
-                return responseUtils.unauthorized(res, 'Invalid old password');
+                return responseUtils.badRequest(res, 'Invalid old password');
             }
 
             responseUtils.error(res, 'Internal server error');
